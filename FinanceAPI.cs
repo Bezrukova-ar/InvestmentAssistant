@@ -11,11 +11,14 @@ namespace InvestmentAssistant
     public class FinanceAPI
     {
         private readonly HttpClient _httpClient;
+        private readonly SecuritiesHashTable _securitiesHashTable;
 
-        public FinanceAPI()
+        public FinanceAPI() 
         {
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("https://iss.moex.com/iss/");
+            _securitiesHashTable = new SecuritiesHashTable();
+            InitializeSecuritiesHashTable().Wait();
         }
         /// <summary>
         /// Метод получения списка бумаг на московской бирже
@@ -36,11 +39,23 @@ namespace InvestmentAssistant
                 string latName = security[20]?.ToString() ?? "";
                 return (secId, secName, latName);
             }).ToList();
-
+            _securitiesHashTable.AddSecurities(securities);
             return securities;
         }
 
+        private async Task InitializeSecuritiesHashTable()
+        {
+            await GetListOfSecurities();
+        }
+
+        ///// <summary>
+        ///// Метод  возвращает кортеж из трех строк
+        ///// </summary>
+        //public (string, string, string) GetSecurityById(string secId)
+        //{
+        //    return _securitiesHashTable.GetSecurityById(secId);
+        //}
     }
-    
+   
 }
 

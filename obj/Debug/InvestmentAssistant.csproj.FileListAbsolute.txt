@@ -53,4 +53,4 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Pages\InvestmentPortfolioOptimizationPage.baml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Pages\HandbookPage.baml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Pages\PrimaryInvestmentPortfolioPage.baml
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.AssemblyReference.cache
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\DotNetProjects.Input.Toolkit.dll

@@ -9,6 +9,6 @@
       Title="InvestmentPortfolioOptimizationPage">
 
     <Border CornerRadius="5" Background="{DynamicResource SecundaryBackgroundColor}">
-        <Label Content="Notes" Foreground="Black" FontSize="50" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="ОПТИМИЗИРОВАННИЕ" Foreground="Black" FontSize="50" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Border>
 </Page>

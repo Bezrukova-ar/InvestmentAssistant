@@ -40,7 +40,9 @@ namespace InvestmentAssistant
         {
             WindowState = WindowState.Minimized;
         }
-
+        /// <summary>
+        /// Навигация по приложению
+        /// </summary>
         private void rdHome_Click(object sender, RoutedEventArgs e)
         {
             

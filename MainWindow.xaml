@@ -100,6 +100,8 @@
     <LineBreak/>
     <Run FontWeight="Bold"/>
     <Run FontWeight="Bold">Управляйте своими инвестициями с удовольствием и эффективностью!</Run>
+    <LineBreak/><LineBreak/>
+                                    <Run FontWeight="Bold"> *****Данные предоставляются московской биржей*****</Run>
                                 </TextBlock>
                             </StackPanel>
                         </Frame.Content>

@@ -17,7 +17,7 @@
             </Grid.ColumnDefinitions>
             <!-- левая панель -->
             <Border CornerRadius="8 0 0 8" Background="{DynamicResource SecundaryBackgroundColor}">
-                <Grid x:Name="gridMenu" Width="60">
+                <Grid x:Name="gridMenu" Width="58">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
                         <RowDefinition Height="80"/>
@@ -85,7 +85,24 @@
 
                 <Border Grid.Row="1" Margin="10">
                     <Frame x:Name="PagesNavigation" NavigationUIVisibility="Hidden">
-                        <!-- напиши что это приложение для инвестирования и все такое -->                    
+                        <Frame.Content>
+                            <StackPanel Margin="20,0,0,0">
+                                <TextBlock FontSize="28" TextWrapping="WrapWithOverflow" >
+    <Run FontWeight="Bold" >Добро пожаловать в приложение по оптимизации инвестиционного портфеля!</Run>
+    <LineBreak/>
+    <Run FontWeight="Bold">Статистика:</Run> Просматривайте цены, доходность и другие показатели ценных бумаг.
+    <LineBreak/>
+    <Run FontWeight="Bold">Формирование портфеля:</Run> Создавайте свой первичный портфель легко и интуитивно.
+    <LineBreak/>
+    <Run FontWeight="Bold">Оптимизация:</Run> Максимизируйте эффективность вашего портфеля, внося коррективы.
+    <LineBreak/>
+    <Run FontWeight="Bold">Справка:</Run> Находите ответы на вопросы и получайте советы по использованию приложения.
+    <LineBreak/>
+    <Run FontWeight="Bold"/>
+    <Run FontWeight="Bold">Управляйте своими инвестициями с удовольствием и эффективностью!</Run>
+                                </TextBlock>
+                            </StackPanel>
+                        </Frame.Content>
                     </Frame>
                 </Border>
             </Grid>

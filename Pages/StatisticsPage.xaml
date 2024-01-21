@@ -9,6 +9,8 @@
       Title="StatisticsPage">
 
     <Border CornerRadius="5" Background="{DynamicResource SecundaryBackgroundColor}">
-        <Label Content="Home" Foreground="Black" FontSize="50" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Grid>
+            
+        </Grid>
     </Border>
 </Page>

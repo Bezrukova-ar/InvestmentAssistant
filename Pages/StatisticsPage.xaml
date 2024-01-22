@@ -40,7 +40,8 @@
                                           BorderBrush="#FFBBAAC9"
                                           FontSize="22"
                                           PreviewKeyDown="AutoCompleteBox_PreviewKeyDown"
-                                          TextChanged="AutoCompleteBox_TextChanged"/>
+                                          Populating="autoCompleteBox_Populating"
+                                          MouseLeftButtonUp="autoCompleteBox_MouseLeftButtonUp"/>
                 </Grid>
             </Border>
             <!--В данном поле отображается график общего объема торгов на рынке, за выбранный период-->

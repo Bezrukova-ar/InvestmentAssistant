@@ -12,7 +12,6 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
-        Methods methods = new Methods();
         public StatisticsPage()
         {
             InitializeComponent();
@@ -28,8 +27,10 @@ namespace InvestmentAssistant.Pages
                 SelectFirstItemFromAutoComplete();
             }
         }
+
         private void SelectFirstItemFromAutoComplete()
         {
+            
             if (autoCompleteBox.SelectedItem != null)
             {
                 // Если выбран элемент, просто закрываем AutoCompleteBox
@@ -48,49 +49,53 @@ namespace InvestmentAssistant.Pages
             }
         }
 
-        private void AutoCompleteBox_TextChanged(object sender, RoutedEventArgs e)
+        private void autoCompleteBox_Populating(object sender, PopulatingEventArgs e)
         {
-           /* try
-            {
-                string searchText = autoCompleteBox.Text;
+            string searchText = autoCompleteBox.Text.ToLower();
 
-                if (methods.securitiesDictionary != null && methods.securitiesDictionary.Count > 0)
+             var filteredSecurities = MainWindow.securitiesHashTable.Values
+                 .Cast<NameOfSecurities>()
+                 .Where(security =>
+                     security.SecurityName.ToLower().Contains(searchText) ||
+                     security.LatinName.ToLower().Contains(searchText))
+                 .Select(security => security.SecurityName)
+                 .Take(10) // Ограничение до 10 элементов
+                 .ToList();
+             autoCompleteBox.ItemsSource = filteredSecurities;
+        }
+
+        private void autoCompleteBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            SelectFirstItemFromAutoComplete();
+        }       
+    }
+}
+/*private void AutoCompleteBox_TextChanged(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string searchText = autoCompleteBox.Text.ToLower(); // Преобразование текста в нижний регистр для регистронезависимого сравнения
+                if (MainWindow.securitiesHashTable != null)
                 {
                     // Фильтрация данных в AutoCompleteBox на основе введенного текста
-                    var filteredSecurities = methods.securitiesDictionary.Values
+                    var filteredSecurities = MainWindow.securitiesHashTable.Values
+                        .Cast<NameOfSecurities>()
                         .Where(security =>
-                            security.SecurityId.ToLower().Contains(searchText.ToLower()) ||
-                            security.SecurityName.ToLower().Contains(searchText.ToLower()))
-                        .Select(security => security.SecurityId)
-                        .ToList();
-
-                    autoCompleteBox.ItemsSource = filteredSecurities;
+                        security.SecurityName.ToLower().Contains(searchText) ||
+                        security.LatinName.ToLower().Contains(searchText))
+                       .Select(security => security.SecurityId)
+                       .ToList();
                 }
                 else
-                {
+                { 
                     // Обработка случая, когда securitiesDictionary пуста или не инициализирована
                     autoCompleteBox.ItemsSource = null;
                 }
-
-                autoCompleteBox.IsDropDownOpen = true;
             }
             catch (Exception ex)
             {
                 // Обработка возможных исключений
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }*/
-            string searchText = autoCompleteBox.Text;
+            }
 
-             // Фильтрация данных в AutoCompleteBox на основе введенного текста
-             var filteredSecurities = methods.securitiesDictionary.Values
-                 .Where(security =>
-                     security.SecurityName.ToLower().Contains(searchText.ToLower()) ||
-                     security.LatinName.ToLower().Contains(searchText.ToLower()))
-                 .Select(security => security.SecurityId)
-                 .ToList();
-
-             autoCompleteBox.ItemsSource = filteredSecurities;
-             autoCompleteBox.IsDropDownOpen = true;
-        }
-    }
-}
+        }*/

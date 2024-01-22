@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +16,13 @@ namespace InvestmentAssistant
     public partial class MainWindow : Window
     {
         Methods methods = new Methods();
+        public static Hashtable securitiesHashTable = new Hashtable();
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+    
         }
      
         /// <summary>
@@ -48,8 +52,6 @@ namespace InvestmentAssistant
         /// </summary>
         private void rdHome_Click(object sender, RoutedEventArgs e)
         {
-            
-
             PagesNavigation.Navigate(new Uri("Pages/StatisticsPage.xaml", UriKind.RelativeOrAbsolute));
         }
         private void rdSounds_Click(object sender, RoutedEventArgs e)
@@ -64,19 +66,14 @@ namespace InvestmentAssistant
         {
             PagesNavigation.Navigate(new Uri("Pages/HandbookPage.xaml", UriKind.RelativeOrAbsolute));
         }
-
         /// <summary>
         /// Вызов метода для загрузки данных о ценных бумагах
         /// </summary>
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await methods.LoadedData();
-            /*await Task.Run(() =>
-            {
-                methods.LoadedData();
-            });*/
-
+            await methods.FillSecuritiesHashTable();
         }
+       
 
     }
 }

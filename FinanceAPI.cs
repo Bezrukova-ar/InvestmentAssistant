@@ -32,14 +32,12 @@ namespace InvestmentAssistant
             var securities = json["securities"]["data"].Select(security =>
             {
                 string secId = security[0]?.ToString() ?? "";
-                string secName = security[9]?.ToString() ?? "";
-                string latName = security[20]?.ToString() ?? "";
+                string secName = security[9]?.ToString() ?? "";            
 
                 return new NameOfSecurities
                 {
                     SecurityId = secId,
-                    SecurityName = secName,
-                    LatinName = latName
+                    SecurityName = secName
                 };
             }).ToList();
             return securities;

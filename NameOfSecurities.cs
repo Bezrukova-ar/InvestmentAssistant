@@ -10,6 +10,5 @@ namespace InvestmentAssistant
     {
         public string SecurityId { get; set; }
         public string SecurityName { get; set; }
-        public string LatinName { get; set; }
     }
 }

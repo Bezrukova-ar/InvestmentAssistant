@@ -17,7 +17,9 @@ namespace InvestmentAssistant.Pages
             InitializeComponent();
                  
         }
-
+        /// <summary>
+        /// Метод проверяет, была ли нажата клавиша Enter
+        /// </summary>
         private void AutoCompleteBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -27,10 +29,9 @@ namespace InvestmentAssistant.Pages
                 SelectFirstItemFromAutoComplete();
             }
         }
-
         private void SelectFirstItemFromAutoComplete()
         {
-            
+           
             if (autoCompleteBox.SelectedItem != null)
             {
                 // Если выбран элемент, просто закрываем AutoCompleteBox
@@ -52,6 +53,30 @@ namespace InvestmentAssistant.Pages
         private void autoCompleteBox_Populating(object sender, PopulatingEventArgs e)
         {
             string searchText = autoCompleteBox.Text.ToLower();
+            var filteredSecurities = MainWindow.securitiesHashTable.Values
+                .Cast<NameOfSecurities>()
+                .Where(security =>
+                    security.SecurityName.ToLower().Contains(searchText))
+                .Select(security => security.SecurityName)
+                .ToList();
+            autoCompleteBox.ItemsSource = filteredSecurities;
+            autoCompleteBox.IsTextCompletionEnabled = true;
+            autoCompleteBox.GetBindingExpression(TextBox.TextProperty)?.UpdateTarget();
+
+
+            /*  string searchText = autoCompleteBox.Text.ToLower();
+
+               var filteredSecurities = MainWindow.securitiesHashTable.Values
+                   .Cast<NameOfSecurities>()
+                   .Where(security =>
+                       security.SecurityName.ToLower().IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                       security.LatinName.ToLower().IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                   .Select(security => security.SecurityName)
+                   .ToList();
+               autoCompleteBox.ItemsSource = filteredSecurities;
+              autoCompleteBox.IsTextCompletionEnabled = true;*/
+
+            /*string searchText = autoCompleteBox.Text.ToLower();
 
              var filteredSecurities = MainWindow.securitiesHashTable.Values
                  .Cast<NameOfSecurities>()
@@ -61,9 +86,9 @@ namespace InvestmentAssistant.Pages
                  .Select(security => security.SecurityName)
                  .Take(10) // Ограничение до 10 элементов
                  .ToList();
-             autoCompleteBox.ItemsSource = filteredSecurities;
+             autoCompleteBox.ItemsSource = filteredSecurities;*/
         }
-
+       
         private void autoCompleteBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             SelectFirstItemFromAutoComplete();

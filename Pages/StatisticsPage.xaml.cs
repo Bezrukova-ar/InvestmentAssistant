@@ -48,10 +48,26 @@ namespace InvestmentAssistant.Pages
         {
             SelectFirstItemFromComboBox();
         }
+
         private void SelectFirstItemFromComboBox()
         {
             if (autoComboBox.SelectedItem != null)
             {
+                // Получаем выбранный элемент
+                string selectedSecurity = autoComboBox.SelectedItem as string;
+
+                // Находим соответствующий элемент в securitiesHashTable
+                NameOfSecurities selectedSecuritiesData = MainWindow.securitiesHashTable.Values
+                    .Cast<NameOfSecurities>()
+                    .FirstOrDefault(security => security.SecurityName == selectedSecurity);
+
+                if (selectedSecuritiesData != null)
+                {
+                    // Выводим значение первого столбца в MessageBox
+                    MessageBox.Show(selectedSecuritiesData.SecurityId.ToString(), "Selected Item");
+                }
+
+                // Закрываем выпадающий список
                 autoComboBox.IsDropDownOpen = false;
             }
             else if (autoComboBox.ItemsSource != null && autoComboBox.ItemsSource.OfType<string>().Any())
@@ -61,8 +77,9 @@ namespace InvestmentAssistant.Pages
             }
             else
             {
+                // Очищаем autoComboBox
                 autoComboBox.Text = string.Empty;
-            }
+            }          
         }       
     }
 }

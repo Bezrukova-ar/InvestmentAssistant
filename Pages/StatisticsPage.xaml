@@ -34,23 +34,17 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="6*" />
                     </Grid.RowDefinitions>
-                    <ComboBox Name="autoComboBox" 
-                                          Margin="5,5,50,2" 
+                    <ComboBox  Name="autoComboBox" 
+                                          Margin="5,5,170,2" 
                                           BorderThickness="2"
-                                          BorderBrush="#FFBBAAC9"
+                                          BorderBrush="#FFC39BE4"
+                                          Foreground="#FF1E1525" 
                                           FontSize="22"
+                                          MaxHeight="35"
                                           PreviewKeyDown="autoComboBox_PreviewKeyDown"
                                           PreviewTextInput="autoComboBox_PreviewTextInput"
                                           MouseLeftButtonUp="autoComboBox_MouseLeftButtonUp"                             
                                          />
-                    <!--<xctk:AutoCompleteBox Name="autoCompleteBox" 
-                                          Margin="5,5,50,2" 
-                                          BorderThickness="2"
-                                          BorderBrush="#FFBBAAC9"
-                                          FontSize="22"
-                                          PreviewKeyDown="AutoCompleteBox_PreviewKeyDown"
-                                          Populating="autoCompleteBox_Populating"
-                                          MouseLeftButtonUp="autoCompleteBox_MouseLeftButtonUp"/>-->
                 </Grid>
             </Border>
             <!--В данном поле отображается график общего объема торгов на рынке, за выбранный период-->

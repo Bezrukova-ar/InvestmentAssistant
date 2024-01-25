@@ -12,6 +12,7 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
+        public static string symbol;
         
         public StatisticsPage()
         {
@@ -63,8 +64,9 @@ namespace InvestmentAssistant.Pages
 
                 if (selectedSecuritiesData != null)
                 {
+                    symbol = selectedSecuritiesData.SecurityId.ToString();
                     // Выводим значение первого столбца в MessageBox
-                    MessageBox.Show(selectedSecuritiesData.SecurityId.ToString(), "Selected Item");
+                    MessageBox.Show(symbol, "Selected Item");
                 }
 
                 // Закрываем выпадающий список

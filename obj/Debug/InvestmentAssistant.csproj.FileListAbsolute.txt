@@ -54,3 +54,12 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Pages\HandbookPage.baml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Pages\PrimaryInvestmentPortfolioPage.baml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\DotNetProjects.Input.Toolkit.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignColors.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignThemes.Wpf.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignColors.pdb
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignThemes.Wpf.pdb
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignThemes.Wpf.xml
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.AssemblyReference.cache

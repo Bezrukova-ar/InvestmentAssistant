@@ -155,7 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Methods.cs" />
-    <Compile Include="NameOfSecurities.cs" />
+    <Compile Include="Classes.cs" />
     <Compile Include="Pages\StatisticsPage.xaml.cs">
       <DependentUpon>StatisticsPage.xaml</DependentUpon>
     </Compile>

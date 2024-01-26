@@ -10,16 +10,33 @@ namespace InvestmentAssistant.Pages
     /// <summary>
     /// Lógica de interacción para StatisticsPage.xaml
     /// </summary>
+   
     public partial class StatisticsPage : Page
     {
+        Methods methods = new Methods();
+        /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
-        
+        /// <summary> Название ценной бумаги </summary>
+        public static string nameSecurity;
+        /// <summary> Дата начала построения графика </summary>
+        public static DateTime? startDate;
+        /// <summary> Дата окончания построения графика </summary>
+         public static DateTime? endDate;
+
         public StatisticsPage()
         {
             InitializeComponent();
             autoComboBox.IsEditable = true;
         }
+        private void startDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            endDatePicker.DisplayDateStart = startDatePicker.SelectedDate;
+        }
 
+        private void endDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate;
+        }
         private void autoComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -29,6 +46,11 @@ namespace InvestmentAssistant.Pages
             }
         }
 
+        /// <summary>
+        /// Обработчик события PreviewTextInput, он добавляет новый введенный текст 
+        /// к существующему и фильтрует список доступных акций
+        /// для отображения только тех, которые содержат введенный текст
+        /// </summary>
         private void autoComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             string newText = autoComboBox.Text + e.Text;
@@ -41,15 +63,29 @@ namespace InvestmentAssistant.Pages
             autoComboBox.ItemsSource = filteredSecurities;
             autoComboBox.IsDropDownOpen = true;
             autoComboBox.Text = newText;
-            e.Handled = true;        
+            e.Handled = true;
+
+            /* string newText = autoComboBox.Text + e.Text;
+             var filteredSecurities = MainWindow.securitiesHashTable.Values
+                 .Cast<NameOfSecurities>()
+                 .Where(security =>
+                     security.SecurityName.ToLower().Contains(newText.ToLower()))
+                 .Select(security => security.SecurityName)
+                 .ToList();
+             autoComboBox.ItemsSource = filteredSecurities;
+             autoComboBox.IsDropDownOpen = true;
+             autoComboBox.Text = newText;
+             e.Handled = true;      */
 
         }
 
         private void autoComboBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SelectFirstItemFromComboBox();
+            UpdateSymbolFromSelectedSecurity();
         }
-
+        /// <summary>
+        /// Выбирает первый элемент из ComboBox и выполняет дополнительные действия на основе выполнения условия
+        /// </summary>
         private void SelectFirstItemFromComboBox()
         {
             if (autoComboBox.SelectedItem != null)
@@ -64,9 +100,7 @@ namespace InvestmentAssistant.Pages
 
                 if (selectedSecuritiesData != null)
                 {
-                    symbol = selectedSecuritiesData.SecurityId.ToString();
-                    // Выводим значение первого столбца в MessageBox
-                    MessageBox.Show(symbol, "Selected Item");
+                    symbol = selectedSecuritiesData.SecurityId.ToString();                   
                 }
 
                 // Закрываем выпадающий список
@@ -82,6 +116,59 @@ namespace InvestmentAssistant.Pages
                 // Очищаем autoComboBox
                 autoComboBox.Text = string.Empty;
             }          
-        }       
+        }
+
+        private void UpdateSymbolFromSelectedSecurity()
+        {
+            if (autoComboBox.SelectedItem != null)
+            {
+                string selectedSecurity = autoComboBox.SelectedItem as string;
+                NameOfSecurities selectedSecuritiesData = MainWindow.securitiesHashTable.Values
+                    .Cast<NameOfSecurities>()
+                    .FirstOrDefault(security => security.SecurityName == selectedSecurity);
+                if (selectedSecuritiesData != null)
+                {
+                    symbol = selectedSecuritiesData.SecurityId.ToString();
+                }
+                autoComboBox.IsDropDownOpen = false;
+            }
+            else if (autoComboBox.ItemsSource != null && autoComboBox.ItemsSource.OfType<string>().Any())
+            {
+                // If no item is selected, but there are items in the ComboBox, select the first one
+                autoComboBox.SelectedItem = autoComboBox.ItemsSource.OfType<string>().First();
+                UpdateSymbolFromSelectedSecurity();
+            }
+            else
+            {
+                autoComboBox.Text = string.Empty;
+            }
+        }
+        private void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
+        {
+            startDate = startDatePicker.SelectedDate;
+            endDate = endDatePicker.SelectedDate;
+            nameSecurity = autoComboBox.SelectedItem?.ToString();          
+
+            if (symbol == null)
+            {
+                symbol = methods.GetIdSecurityByName(nameSecurity);
+                if (symbol == null)
+                {
+                    return; // прервать выполнение программы
+                }
+            }
+            else
+            {
+                if (startDate != null && endDate != null)
+                {
+                    string message = $"{symbol}   {startDate} {endDate}";
+                    MessageBox.Show(message, "Stock Information");
+                }
+                else
+                {
+                    MessageBox.Show("Вы не ввели даты", "Внимание!");
+                }
+            }
+        }      
     }
 }

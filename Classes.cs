@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,22 @@ namespace InvestmentAssistant
         public string SecurityId { get; set; }
         /// <summary> Название ценной бумаги </summary>
         public string SecurityName { get; set; }
+    }
+    public class StockParametersForChart
+    {
+        public string Symbol { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string HistoricalData { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
+    public class CandlestickData
+    {
+        public DateTime TradeDate { get; set; }
+        public decimal Open { get; set; }
+        public decimal Low { get; set; }
+        public decimal High { get; set; }
+        public decimal Close { get; set; }
     }
 }

@@ -14,14 +14,15 @@ namespace InvestmentAssistant.Pages
     public partial class StatisticsPage : Page
     {
         Methods methods = new Methods();
+
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
         /// <summary> Название ценной бумаги </summary>
         public static string nameSecurity;
         /// <summary> Дата начала построения графика </summary>
-        public static DateTime? startDate;
+        public static DateTime startDate;
         /// <summary> Дата окончания построения графика </summary>
-         public static DateTime? endDate;
+         public static DateTime endDate;
 
         public StatisticsPage()
         {
@@ -30,12 +31,20 @@ namespace InvestmentAssistant.Pages
         }
         private void startDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            endDatePicker.DisplayDateStart = startDatePicker.SelectedDate;
+            //endDatePicker.DisplayDateStart = startDatePicker.SelectedDate;
+            if (startDatePicker.SelectedDate != null)
+            {
+                endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
+            }
         }
 
         private void endDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate;
+            //startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate;
+            if (endDatePicker.SelectedDate != null)
+            {
+                startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
+            }
         }
         private void autoComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -143,10 +152,10 @@ namespace InvestmentAssistant.Pages
                 autoComboBox.Text = string.Empty;
             }
         }
-        private void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
+        private async void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
         {
-            startDate = startDatePicker.SelectedDate;
-            endDate = endDatePicker.SelectedDate;
+            startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
+            endDate = (DateTime)(endDatePicker.SelectedDate != null ? endDatePicker.SelectedDate : null);
             nameSecurity = autoComboBox.SelectedItem?.ToString();          
 
             if (symbol == null)
@@ -161,8 +170,15 @@ namespace InvestmentAssistant.Pages
             {
                 if (startDate != null && endDate != null)
                 {
-                    string message = $"{symbol}   {startDate} {endDate}";
-                    MessageBox.Show(message, "Stock Information");
+                    //тут должен выполняться запрос и строиться график
+                    /*List<CandlestickData> candlestickDataList = await finance.GetCandlestickData(symbol, startDate, endDate);
+
+                    // Далее вы можете использовать полученные данные, например:
+                    foreach (var candlestickData in candlestickDataList)
+                    {
+                        MessageBox.Show($"Trade Date: {candlestickData.TradeDate}, Open: {candlestickData.Open}, Low: {candlestickData.Low}, High: {candlestickData.High}, Close: {candlestickData.Close}");
+                    }*/
+                    
                 }
                 else
                 {

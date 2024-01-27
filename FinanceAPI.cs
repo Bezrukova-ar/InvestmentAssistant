@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace InvestmentAssistant
 {
@@ -45,37 +47,37 @@ namespace InvestmentAssistant
         /// <summary>
         /// Метод получения данных для построения свечного графика
         /// </summary>
-        public async Task<string> GetHistoricalData(string symbol, DateTime startDate, DateTime endDate)
+        public async Task<List<CandlestickData>> GetCandlestickData(string symbol, DateTime startDate, DateTime endDate)
         {
-            try
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities/{symbol}/candles.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}");
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            // Parse the JSON response
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["candles"]["columns"].ToObject<List<string>>();
+            var data = json["candles"]["data"].ToObject<List<List<object>>>();
+
+            // Map the data to CandlestickData objects
+            List<CandlestickData> candlestickDataList = new List<CandlestickData>();
+            foreach (var item in data)
             {
-                // Формируем URL запроса с нужными параметрами для MOEX API
-                string url = $"history/engines/stock/markets/shares/boards/TQBR/securities/{symbol}.json?iss.meta=off&from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}";
-
-                // Отправляем GET-запрос и получаем ответ
-                HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-                // Проверяем успешность запроса
-                if (response.IsSuccessStatusCode)
+                var candlestickData = new CandlestickData
                 {
-                    // Читаем содержимое ответа
-                    string responseData = await response.Content.ReadAsStringAsync();
+                    TradeDate = DateTime.Parse(item[columns.IndexOf("begin")].ToString()),
+                    Open = Convert.ToDecimal(item[columns.IndexOf("open")]),
+                    Low = Convert.ToDecimal(item[columns.IndexOf("low")]),
+                    High = Convert.ToDecimal(item[columns.IndexOf("high")]),
+                    Close = Convert.ToDecimal(item[columns.IndexOf("close")])
+                    // Add other properties if needed
+                };
+                candlestickDataList.Add(candlestickData);
+            }
 
-                    // Возвращаем данные (в зависимости от формата ответа)
-                    return responseData;
-                }
-                else
-                {
-                    // Обработка ошибки запроса
-                    return $"Error: {response.StatusCode} - {response.ReasonPhrase}";
-                }
-            }
-            catch (Exception ex)
-            {
-                // Обработка исключений, если они возникнут
-                return $"Exception: {ex.Message}";
-            }
-        }
+            return candlestickDataList;
+
+        }       
     } 
 }
 

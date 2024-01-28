@@ -199,9 +199,18 @@ namespace InvestmentAssistant.Pages
                      }
                      MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
-                    
+
                     // Создание модели графика
                     var plotModel = new PlotModel { Title = "Candlestick Chart" };
+
+                    // Добавление оси X с указанным форматом даты
+                    var xAxis = new DateTimeAxis
+                    {
+                        Position = AxisPosition.Bottom,
+                        StringFormat = "dd.MM.yyyy HH:mm", // Укажите нужный формат даты
+                        Title = "Дата",
+                    };
+                    plotModel.Axes.Add(xAxis);
 
                     // Создание серии свечей
                     var candlestickSeries = new CandleStickSeries();
@@ -213,7 +222,7 @@ namespace InvestmentAssistant.Pages
                     foreach (DictionaryEntry entry in sortedEntries)
                     {
                         var candlestickData = (CandlestickData)entry.Value;
-                        candlestickSeries.Items.Add(new HighLowItem(DateTimeAxis.ToDouble(candlestickData.StartDate), (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
+                        candlestickSeries.Items.Add(new HighLowItem(DateTimeAxis.ToDouble(candlestickData.StartDate), (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close)); ;
                     }
 
                     // Добавление серии к модели

@@ -61,10 +61,9 @@
                     <Button Grid.Row="0" Grid.Column="2" x:Name="downloadStockPriceChart" Content="Загрузить график" Margin="15,0,5,0" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Click="downloadStockPriceChart_Click"/>
                    
                     
-                    <!--Ректальные свечи-->
+                    <!--Свечевой график-->
                     <Grid Grid.Row="1" Grid.ColumnSpan="3">
-                        <!--<oxy:PlotView x:Name="candlestickPlot"  Margin="5"/>-->
-                        <lvc:CartesianChart x:Name="candlestickChart" Margin="5">
+                        <lvc:CartesianChart x:Name="candlestickChart" Margin="5" Visibility="Hidden">
                             
                         </lvc:CartesianChart>
                     </Grid>

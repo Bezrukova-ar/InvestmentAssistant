@@ -52,19 +52,19 @@ namespace InvestmentAssistant
         /// </summary>
         public async Task FillCandlestickChartDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable candlestickChartDataHash)
         {
-            var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
+            /*var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
 
              int index = 0;
              foreach (var candlestickData in candlestickDataList)
              {
                  candlestickChartDataHash.Add(index++, candlestickData);
-             }
-           /* var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
+             }*/
+            var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
 
             foreach (var candlestickData in candlestickDataList)
             {
                 candlestickChartDataHash.Add(candlestickData.StartDate, candlestickData);
-            }*/
+            }
         }
     }
 }

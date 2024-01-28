@@ -203,81 +203,38 @@ namespace InvestmentAssistant.Pages
                         message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
                     }
                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
-
-
-                    // Создание модели графика
-                    /* var plotModel = new PlotModel { Title = "Candlestick Chart" };
-
-                     // Добавление оси X с указанным форматом даты
-                     var xAxis = new DateTimeAxis
-                     {
-                         Position = AxisPosition.Bottom,
-                         StringFormat = "dd.MM.yyyy HH:mm", // Укажите нужный формат даты
-                         Title = "Дата",
-                         Minimum = DateTimeAxis.ToDouble(startDate),
-                         Maximum = DateTimeAxis.ToDouble(endDate)
-                     };
-                     plotModel.Axes.Add(xAxis);
+                    
+                    var plotModel = new CartesianChart{};
 
                      // Создание серии свечей
-                     var candlestickSeries = new CandleStickSeries();
+                     var candlestickSeries = new CandleSeries
+                     {
+                         Values = new ChartValues<OhlcPoint>()
+                     };
 
                      // Сортировка элементов хеш-таблицы по ключу
-                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
+                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (DateTime)entry.Key);
 
                      // Заполнение серии данными из отсортированной хеш-таблицы
                      foreach (DictionaryEntry entry in sortedEntries)
                      {
                          var candlestickData = (CandlestickData)entry.Value;
-                         double xValue = DateTimeAxis.ToDouble(candlestickData.StartDate);
-
-                         // Проверка, чтобы значение находилось в указанном диапазоне
-                         if (xValue >= xAxis.Minimum && xValue <= xAxis.Maximum)
+                         candlestickSeries.Values.Add(new OhlcPoint
                          {
-                             candlestickSeries.Items.Add(new HighLowItem(xValue, (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
-                         }
+                             High = (double)candlestickData.High,
+                             Low = (double)candlestickData.Low,
+                             Open = (double)candlestickData.Open,
+                             Close = (double)candlestickData.Close
+                         });
                      }
 
                      // Добавление серии к модели
                      plotModel.Series.Add(candlestickSeries);
 
-                     // Привязка модели к PlotView
-                     candlestickPlot.Model = plotModel;*/
-
-
-
-                    var plotModel = new CartesianChart{};
-
-                    // Создание серии свечей
-                    var candlestickSeries = new CandleSeries
-                    {
-                        Values = new ChartValues<OhlcPoint>()
-                    };
-
-                    // Сортировка элементов хеш-таблицы по ключу
-                    var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
-
-                    // Заполнение серии данными из отсортированной хеш-таблицы
-                    foreach (DictionaryEntry entry in sortedEntries)
-                    {
-                        var candlestickData = (CandlestickData)entry.Value;
-                        candlestickSeries.Values.Add(new OhlcPoint
-                        {
-                            High = (double)candlestickData.High,
-                            Low = (double)candlestickData.Low,
-                            Open = (double)candlestickData.Open,
-                            Close = (double)candlestickData.Close
-                        });
-                    }
-
-                    // Добавление серии к модели
-                    plotModel.Series.Add(candlestickSeries);
-
                     // Привязка модели к CartesianChart
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
-                    
-
-                    candlestickChart.LegendLocation = LegendLocation.None; 
+                    candlestickChart.LegendLocation = LegendLocation.None;
+                    candlestickChart.Visibility = Visibility;
                 }
                 else
                 {

@@ -213,7 +213,7 @@ namespace InvestmentAssistant.Pages
                      };
 
                      // Сортировка элементов хеш-таблицы по ключу
-                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (DateTime)entry.Key);
+                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
 
                      // Заполнение серии данными из отсортированной хеш-таблицы
                      foreach (DictionaryEntry entry in sortedEntries)

@@ -1,6 +1,6 @@
-﻿using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Wpf;
+﻿using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace InvestmentAssistant.Pages
         /// <summary> Дата начала построения графика </summary>
         public static DateTime startDate;
         /// <summary> Дата окончания построения графика </summary>
-         public static DateTime endDate;
+        public static DateTime endDate;
 
         public StatisticsPage()
         {
@@ -199,7 +199,28 @@ namespace InvestmentAssistant.Pages
                      }
                      MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
-                   
+                    
+                    // Создание модели графика
+                    var plotModel = new PlotModel { Title = "Candlestick Chart" };
+
+                    // Создание серии свечей
+                    var candlestickSeries = new CandleStickSeries();
+
+                    // Сортировка элементов хеш-таблицы по ключу
+                    var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
+
+                    // Заполнение серии данными из отсортированной хеш-таблицы
+                    foreach (DictionaryEntry entry in sortedEntries)
+                    {
+                        var candlestickData = (CandlestickData)entry.Value;
+                        candlestickSeries.Items.Add(new HighLowItem(DateTimeAxis.ToDouble(candlestickData.StartDate), (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
+                    }
+
+                    // Добавление серии к модели
+                    plotModel.Series.Add(candlestickSeries);
+
+                    // Привязка модели к PlotView
+                    candlestickPlot.Model = plotModel;
                 }
                 else
                 {

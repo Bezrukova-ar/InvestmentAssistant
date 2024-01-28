@@ -33,12 +33,6 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.CopyComplete
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.exe
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.pdb
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.dll
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.dll
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.pdb
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.xml
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.pdb
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Newtonsoft.Json.dll
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Newtonsoft.Json.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\Themes\LightTheme.baml
@@ -63,3 +57,9 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.pdb
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.AssemblyReference.cache
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.Shared.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.xml
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.xml
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.Shared.xml

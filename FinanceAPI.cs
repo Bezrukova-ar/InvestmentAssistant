@@ -10,6 +10,12 @@ using System.Net;
 
 namespace InvestmentAssistant
 {
+
+    /// <summary>
+    /// Класс FinanceAPI инкапсулирует функциональные возможности
+    /// взаимодействия с API Московской биржи(MOEX) 
+    /// для получения информации о ценных бумагах
+    /// </summary>
     public class FinanceAPI
     {
         private readonly HttpClient _httpClient;
@@ -20,9 +26,8 @@ namespace InvestmentAssistant
             _httpClient.BaseAddress = new Uri("https://iss.moex.com/iss/");
 
         }
-        /// <summary>
-        /// Метод получения списка бумаг на московской бирже
-        /// </summary>
+
+        /// <summary> Метод получения списка бумаг на московской бирже </summary>
         public async Task<List<NameOfSecurities>> GetListOfSecurities()
         {
             HttpResponseMessage response = await _httpClient.GetAsync("engines/stock/markets/shares/securities.json");
@@ -44,9 +49,8 @@ namespace InvestmentAssistant
             }).ToList();
             return securities;
         }
-        /// <summary>
-        /// Метод получения данных для построения свечного графика
-        /// </summary>
+
+        /// <summary> Метод получения данных для построения свечного графика </summary>
         public async Task<List<CandlestickData>> GetCandlestickData(string symbol, DateTime startDate, DateTime endDate)
         {
 
@@ -54,18 +58,18 @@ namespace InvestmentAssistant
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            // Parse the JSON response
+            // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
             var columns = json["candles"]["columns"].ToObject<List<string>>();
             var data = json["candles"]["data"].ToObject<List<List<object>>>();
 
-            // Map the data to CandlestickData objects
+            // Сопоставление данных с объектами CandlestickData
             List<CandlestickData> candlestickDataList = new List<CandlestickData>();
             foreach (var item in data)
             {
                 var candlestickData = new CandlestickData
                 {
-                    
+
                     Open = Convert.ToDecimal(item[columns.IndexOf("open")]),
                     Low = Convert.ToDecimal(item[columns.IndexOf("low")]),
                     High = Convert.ToDecimal(item[columns.IndexOf("high")]),
@@ -76,7 +80,7 @@ namespace InvestmentAssistant
                 candlestickDataList.Add(candlestickData);
             }
             return candlestickDataList;
-        }       
-    } 
+        }
+    }
 }
 

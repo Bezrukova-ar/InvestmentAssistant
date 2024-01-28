@@ -13,17 +13,15 @@ using System.Windows.Media;
 namespace InvestmentAssistant.Pages
 {
     /// <summary>
-    /// Lógica de interacción para StatisticsPage.xaml
+    /// Класс представляет страницу в приложении, 
+    /// специально предназначенную для отображения статистической информации, 
+    /// связанной с финансовыми данными
     /// </summary>
-   
     public partial class StatisticsPage : Page
     {
-        Methods methods = new Methods();
-
-
-    
-
-
+        /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
+        FinanceDataHandler financeDataHandler = new FinanceDataHandler();
+        /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
         public static Hashtable candlestickChartDataHash = new Hashtable();
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
@@ -39,23 +37,29 @@ namespace InvestmentAssistant.Pages
             InitializeComponent();
             autoComboBox.IsEditable = true;
         }
+        /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
+        /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
+        /// который всегда составляет не менее 7 дней </summary>
         private void startDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            //endDatePicker.DisplayDateStart = startDatePicker.SelectedDate;
+            
             if (startDatePicker.SelectedDate != null)
             {
                 endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
             }
         }
-
+        /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
+        /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
+        /// который всегда составляет не менее 7 дней </summary>
         private void endDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            //startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate;
+            
             if (endDatePicker.SelectedDate != null)
             {
                 startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
             }
         }
+        ///<summary> Обработчик события PreviewKeyDown выбирает первый элемент в поле со списком при нажатии клавиши Enter</summary>
         private void autoComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -137,6 +141,8 @@ namespace InvestmentAssistant.Pages
             }          
         }
 
+        ///<summary> Метод UpdateSymbolFromSelectedSecurity обновляет
+        ///значение перменной symbol на основе выбора, сделанного в ComboBox </summary>
         private void UpdateSymbolFromSelectedSecurity()
         {
             if (autoComboBox.SelectedItem != null)
@@ -153,7 +159,7 @@ namespace InvestmentAssistant.Pages
             }
             else if (autoComboBox.ItemsSource != null && autoComboBox.ItemsSource.OfType<string>().Any())
             {
-                // If no item is selected, but there are items in the ComboBox, select the first one
+                // Если ни один элемент не выбран, но в ComboBox есть элементы, выбрать первый
                 autoComboBox.SelectedItem = autoComboBox.ItemsSource.OfType<string>().First();
                 UpdateSymbolFromSelectedSecurity();
             }
@@ -162,6 +168,7 @@ namespace InvestmentAssistant.Pages
                 autoComboBox.Text = string.Empty;
             }
         }
+
         private async void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
         {
             startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
@@ -170,7 +177,7 @@ namespace InvestmentAssistant.Pages
 
             if (symbol == null)
             {
-                symbol = methods.GetIdSecurityByName(nameSecurity);
+                symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
                 if (symbol == null)
                 {
                     return; // прервать выполнение программы
@@ -182,7 +189,7 @@ namespace InvestmentAssistant.Pages
                 {
                     //тут должен выполняться запрос и строиться график
                     candlestickChartDataHash.Clear();
-                    await methods.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
+                    await financeDataHandler.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
                     // Отображение значения хеш-таблицы в MessageBox
                     /* string message = "Хеш-таблица candlestickChartDataHash:\n";
                      foreach (var key in candlestickChartDataHash.Keys)

@@ -48,10 +48,10 @@
                     </ToggleButton>
 
                     <StackPanel Grid.Row="3">
-                        <RadioButton x:Name="rdHome" IsChecked="True" Content="Общая статистика" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource statistics}" Click="rdHome_Click"/>
-                        <RadioButton x:Name="rdSounds" Content="Создание" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource primaryInvestmentPortfolio}" Margin="0 5 0 5" Click="rdSounds_Click"/>
-                        <RadioButton x:Name="rdNotes" Content="Оптимизация" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource investmentPortfolioOptimization}" Click="rdNotes_Click"/>
-                        <RadioButton x:Name="rdPayment" Content="Справочник" Style="{DynamicResource MenuRadioButtonStyle}"  Tag="{DynamicResource handbook}" Margin="0 5 0 5" Click="rdPayment_Click"/>
+                        <RadioButton x:Name="rdHome" IsChecked="True" Content="Общая статистика" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource statistics}" Click="rdStatistics_Click"/>
+                        <RadioButton x:Name="rdPrimaryInvestmentPortfolio" Content="Создание" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource primaryInvestmentPortfolio}" Margin="0 5 0 5" Click="rdPrimaryInvestmentPortfolio_Click"/>
+                        <RadioButton x:Name="rdInvestmentPortfolioOptimization" Content="Оптимизация" Style="{DynamicResource MenuRadioButtonStyle}" Tag="{DynamicResource investmentPortfolioOptimization}" Click="rdInvestmentPortfolioOptimization_Click"/>
+                        <RadioButton x:Name="rdHandbook" Content="Справочник" Style="{DynamicResource MenuRadioButtonStyle}"  Tag="{DynamicResource handbook}" Margin="0 5 0 5" Click="rdHandbook_Click"/>
 
                     </StackPanel>
 

@@ -6,10 +6,16 @@ using System.Windows;
 
 namespace InvestmentAssistant
 {
-    
-    class Methods
+
+    /// <summary>
+    ///  Класс FinanceDataHandler предназначен для инкапсуляции и организации различных методов,
+    ///  связанных с обработкой финансовых данных с использованием FinanceAPI
+    /// </summary>
+    class FinanceDataHandler
     {
+        /// <summary> Экземпляр служит шлюзом для получения финансовых данных </summary>
         readonly FinanceAPI financeAPI = new FinanceAPI();
+
         /// <summary>
         /// Метод для заполнения данными о ценных бумагах хеш-таблицы
         /// </summary>
@@ -24,6 +30,7 @@ namespace InvestmentAssistant
                 }
             }
         }
+
         /// <summary>
         /// Метод поиска кода акции по названию
         /// </summary>
@@ -36,12 +43,13 @@ namespace InvestmentAssistant
                     return security.SecurityId;
                 }
             }
-            
             MessageBox.Show("Не найден код для введенной акции, выберите другую или допишите название"); // Если запись не найдена
             return null;
         }
 
-      
+        /// <summary>
+        /// Метод для заполнения данными для построения свечного графика хеш-таблицы
+        /// </summary>
         public async Task FillCandlestickChartDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable candlestickChartDataHash)
         {
             var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
@@ -49,7 +57,7 @@ namespace InvestmentAssistant
             int index = 0;
             foreach (var candlestickData in candlestickDataList)
             {
-               candlestickChartDataHash.Add(index++, candlestickData);
+                candlestickChartDataHash.Add(index++, candlestickData);
             }
         }
     }

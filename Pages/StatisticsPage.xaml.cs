@@ -1,4 +1,7 @@
-﻿using OxyPlot;
+﻿using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
+using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
@@ -36,6 +39,7 @@ namespace InvestmentAssistant.Pages
         {
             InitializeComponent();
             autoComboBox.IsEditable = true;
+         
         }
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
@@ -201,19 +205,74 @@ namespace InvestmentAssistant.Pages
 
 
                     // Создание модели графика
-                    var plotModel = new PlotModel { Title = "Candlestick Chart" };
+                    /* var plotModel = new PlotModel { Title = "Candlestick Chart" };
+
+                     // Добавление оси X с указанным форматом даты
+                     var xAxis = new DateTimeAxis
+                     {
+                         Position = AxisPosition.Bottom,
+                         StringFormat = "dd.MM.yyyy HH:mm", // Укажите нужный формат даты
+                         Title = "Дата",
+                         Minimum = DateTimeAxis.ToDouble(startDate),
+                         Maximum = DateTimeAxis.ToDouble(endDate)
+                     };
+                     plotModel.Axes.Add(xAxis);
+
+                     // Создание серии свечей
+                     var candlestickSeries = new CandleStickSeries();
+
+                     // Сортировка элементов хеш-таблицы по ключу
+                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
+
+                     // Заполнение серии данными из отсортированной хеш-таблицы
+                     foreach (DictionaryEntry entry in sortedEntries)
+                     {
+                         var candlestickData = (CandlestickData)entry.Value;
+                         double xValue = DateTimeAxis.ToDouble(candlestickData.StartDate);
+
+                         // Проверка, чтобы значение находилось в указанном диапазоне
+                         if (xValue >= xAxis.Minimum && xValue <= xAxis.Maximum)
+                         {
+                             candlestickSeries.Items.Add(new HighLowItem(xValue, (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
+                         }
+                     }
+
+                     // Добавление серии к модели
+                     plotModel.Series.Add(candlestickSeries);
+
+                     // Привязка модели к PlotView
+                     candlestickPlot.Model = plotModel;*/
+
+
+                    // Создание свечного графика
+                    var plotModel = new CartesianChart
+                    {
+                        Series = new SeriesCollection(),
+                        LegendLocation = LegendLocation.None
+                    };
 
                     // Добавление оси X с указанным форматом даты
-                    var xAxis = new DateTimeAxis
-                    {
-                        Position = AxisPosition.Bottom,
-                        StringFormat = "dd.MM.yyyy HH:mm", // Укажите нужный формат даты
-                        Title = "Дата",
-                    };
-                    plotModel.Axes.Add(xAxis);
+                     var xAxis = new LiveCharts.Wpf.Axis
+                     {
+                         Title = "Дата",
+                         Labels = new[]
+                         {
+                          DateTime.Now.ToString("dd.MM.yyyy HH:mm"),
+
+                         },
+                         MinValue = DateTimeAxis.ToDouble(startDate),
+                         MaxValue = DateTimeAxis.ToDouble(endDate)
+                     };
+                     plotModel.AxisX.Add(xAxis);
+
+                    
+                    plotModel.AxisX.Add(xAxis);
 
                     // Создание серии свечей
-                    var candlestickSeries = new CandleStickSeries();
+                    var candlestickSeries = new CandleSeries
+                    {
+                        Values = new ChartValues<OhlcPoint>()
+                    };
 
                     // Сортировка элементов хеш-таблицы по ключу
                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
@@ -222,14 +281,19 @@ namespace InvestmentAssistant.Pages
                     foreach (DictionaryEntry entry in sortedEntries)
                     {
                         var candlestickData = (CandlestickData)entry.Value;
-                        candlestickSeries.Items.Add(new HighLowItem(DateTimeAxis.ToDouble(candlestickData.StartDate), (double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close)); ;
+                        double xValue = DateTimeAxis.ToDouble(candlestickData.StartDate);
+
+                        // Проверка, чтобы значение находилось в указанном диапазоне
+                        if (xValue >= xAxis.MinValue && xValue <= xAxis.MaxValue)
+                        {
+                            candlestickSeries.Values.Add(new OhlcPoint((double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
+                        }
                     }
 
                     // Добавление серии к модели
                     plotModel.Series.Add(candlestickSeries);
 
-                    // Привязка модели к PlotView
-                    candlestickPlot.Model = plotModel;
+                    candlestickChart.Series = new SeriesCollection { candlestickSeries };
                 }
                 else
                 {

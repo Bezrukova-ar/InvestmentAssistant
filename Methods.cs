@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,6 +39,18 @@ namespace InvestmentAssistant
             
             MessageBox.Show("Не найден код для введенной акции, выберите другую или допишите название"); // Если запись не найдена
             return null;
+        }
+
+      
+        public async Task FillCandlestickChartDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable candlestickChartDataHash)
+        {
+            var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
+
+            int index = 0;
+            foreach (var candlestickData in candlestickDataList)
+            {
+               candlestickChartDataHash.Add(index++, candlestickData);
+            }
         }
     }
 }

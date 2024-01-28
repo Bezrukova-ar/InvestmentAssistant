@@ -1,9 +1,14 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace InvestmentAssistant.Pages
 {
@@ -15,6 +20,11 @@ namespace InvestmentAssistant.Pages
     {
         Methods methods = new Methods();
 
+
+    
+
+
+        public static Hashtable candlestickChartDataHash = new Hashtable();
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
         /// <summary> Название ценной бумаги </summary>
@@ -171,14 +181,18 @@ namespace InvestmentAssistant.Pages
                 if (startDate != null && endDate != null)
                 {
                     //тут должен выполняться запрос и строиться график
-                    /*List<CandlestickData> candlestickDataList = await finance.GetCandlestickData(symbol, startDate, endDate);
+                    candlestickChartDataHash.Clear();
+                    await methods.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
+                    // Отображение значения хеш-таблицы в MessageBox
+                    /* string message = "Хеш-таблица candlestickChartDataHash:\n";
+                     foreach (var key in candlestickChartDataHash.Keys)
+                     {
+                         var candlestickData = (CandlestickData)candlestickChartDataHash[key];
+                         message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}\n"; //и так далее но уже с датой
+                     }
+                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
-                    // Далее вы можете использовать полученные данные, например:
-                    foreach (var candlestickData in candlestickDataList)
-                    {
-                        MessageBox.Show($"Trade Date: {candlestickData.TradeDate}, Open: {candlestickData.Open}, Low: {candlestickData.Low}, High: {candlestickData.High}, Close: {candlestickData.Close}");
-                    }*/
-                    
+                   
                 }
                 else
                 {

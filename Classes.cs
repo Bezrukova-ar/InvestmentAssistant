@@ -25,10 +25,12 @@ namespace InvestmentAssistant
 
     public class CandlestickData
     {
-        public DateTime TradeDate { get; set; }
+      
         public decimal Open { get; set; }
         public decimal Low { get; set; }
         public decimal High { get; set; }
         public decimal Close { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

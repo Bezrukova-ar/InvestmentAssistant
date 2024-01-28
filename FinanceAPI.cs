@@ -65,18 +65,17 @@ namespace InvestmentAssistant
             {
                 var candlestickData = new CandlestickData
                 {
-                    TradeDate = DateTime.Parse(item[columns.IndexOf("begin")].ToString()),
+                    
                     Open = Convert.ToDecimal(item[columns.IndexOf("open")]),
                     Low = Convert.ToDecimal(item[columns.IndexOf("low")]),
                     High = Convert.ToDecimal(item[columns.IndexOf("high")]),
-                    Close = Convert.ToDecimal(item[columns.IndexOf("close")])
-                    // Add other properties if needed
+                    Close = Convert.ToDecimal(item[columns.IndexOf("close")]),
+                    StartDate = DateTime.Parse(item[columns.IndexOf("begin")].ToString()),
+                    EndDate = DateTime.Parse(item[columns.IndexOf("end")].ToString())
                 };
                 candlestickDataList.Add(candlestickData);
             }
-
             return candlestickDataList;
-
         }       
     } 
 }

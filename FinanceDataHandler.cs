@@ -54,11 +54,17 @@ namespace InvestmentAssistant
         {
             var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
 
-            int index = 0;
+             int index = 0;
+             foreach (var candlestickData in candlestickDataList)
+             {
+                 candlestickChartDataHash.Add(index++, candlestickData);
+             }
+           /* var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
+
             foreach (var candlestickData in candlestickDataList)
             {
-                candlestickChartDataHash.Add(index++, candlestickData);
-            }
+                candlestickChartDataHash.Add(candlestickData.StartDate, candlestickData);
+            }*/
         }
     }
 }

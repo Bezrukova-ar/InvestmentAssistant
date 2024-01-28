@@ -35,6 +35,7 @@ namespace InvestmentAssistant.Pages
         /// <summary> Дата окончания построения графика </summary>
         public static DateTime endDate;
 
+
         public StatisticsPage()
         {
             InitializeComponent();
@@ -46,7 +47,7 @@ namespace InvestmentAssistant.Pages
         /// который всегда составляет не менее 7 дней </summary>
         private void startDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+           
             if (startDatePicker.SelectedDate != null)
             {
                 endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
@@ -57,7 +58,7 @@ namespace InvestmentAssistant.Pages
         /// который всегда составляет не менее 7 дней </summary>
         private void endDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+           
             if (endDatePicker.SelectedDate != null)
             {
                 startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
@@ -195,13 +196,13 @@ namespace InvestmentAssistant.Pages
                     candlestickChartDataHash.Clear();
                     await financeDataHandler.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
                     // Отображение значения хеш-таблицы в MessageBox
-                    /* string message = "Хеш-таблица candlestickChartDataHash:\n";
-                     foreach (var key in candlestickChartDataHash.Keys)
-                     {
-                         var candlestickData = (CandlestickData)candlestickChartDataHash[key];
-                         message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}\n"; //и так далее но уже с датой
-                     }
-                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                    /*string message = "Хеш-таблица candlestickChartDataHash:\n";
+                    foreach (var key in candlestickChartDataHash.Keys)
+                    {
+                        var candlestickData = (CandlestickData)candlestickChartDataHash[key];
+                        message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
+                    }
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
 
                     // Создание модели графика
@@ -244,29 +245,8 @@ namespace InvestmentAssistant.Pages
                      candlestickPlot.Model = plotModel;*/
 
 
-                    // Создание свечного графика
-                    var plotModel = new CartesianChart
-                    {
-                        Series = new SeriesCollection(),
-                        LegendLocation = LegendLocation.None
-                    };
 
-                    // Добавление оси X с указанным форматом даты
-                     var xAxis = new LiveCharts.Wpf.Axis
-                     {
-                         Title = "Дата",
-                         Labels = new[]
-                         {
-                          DateTime.Now.ToString("dd.MM.yyyy HH:mm"),
-
-                         },
-                         MinValue = DateTimeAxis.ToDouble(startDate),
-                         MaxValue = DateTimeAxis.ToDouble(endDate)
-                     };
-                     plotModel.AxisX.Add(xAxis);
-
-                    
-                    plotModel.AxisX.Add(xAxis);
+                    var plotModel = new CartesianChart{};
 
                     // Создание серии свечей
                     var candlestickSeries = new CandleSeries
@@ -281,19 +261,23 @@ namespace InvestmentAssistant.Pages
                     foreach (DictionaryEntry entry in sortedEntries)
                     {
                         var candlestickData = (CandlestickData)entry.Value;
-                        double xValue = DateTimeAxis.ToDouble(candlestickData.StartDate);
-
-                        // Проверка, чтобы значение находилось в указанном диапазоне
-                        if (xValue >= xAxis.MinValue && xValue <= xAxis.MaxValue)
+                        candlestickSeries.Values.Add(new OhlcPoint
                         {
-                            candlestickSeries.Values.Add(new OhlcPoint((double)candlestickData.High, (double)candlestickData.Low, (double)candlestickData.Open, (double)candlestickData.Close));
-                        }
+                            High = (double)candlestickData.High,
+                            Low = (double)candlestickData.Low,
+                            Open = (double)candlestickData.Open,
+                            Close = (double)candlestickData.Close
+                        });
                     }
 
                     // Добавление серии к модели
                     plotModel.Series.Add(candlestickSeries);
 
+                    // Привязка модели к CartesianChart
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
+                    
+
+                    candlestickChart.LegendLocation = LegendLocation.None; 
                 }
                 else
                 {

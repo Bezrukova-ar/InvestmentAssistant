@@ -68,3 +68,4 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.pdb
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.AssemblyReference.cache

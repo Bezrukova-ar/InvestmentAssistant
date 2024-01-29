@@ -22,10 +22,6 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
-        FinanceAPI finance = new FinanceAPI();
-
-
-
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
@@ -197,8 +193,10 @@ namespace InvestmentAssistant.Pages
             {
                 if (startDate != null && endDate != null)
                 {
-                    //тут должен выполняться запрос и строиться график
+                    
                     candlestickChartDataHash.Clear();
+                    volumeTradeDataHash.Clear();
+
                     await financeDataHandler.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
                     // Отображение значения хеш-таблицы в MessageBox
                     /*string message = "Хеш-таблица candlestickChartDataHash:\n";
@@ -242,9 +240,16 @@ namespace InvestmentAssistant.Pages
                     candlestickChart.Visibility = Visibility;
 
 
+                    await financeDataHandler.FillVolumeTradeDataHash(symbol, startDate, endDate, volumeTradeDataHash);
+                    // Отображение значения хеш-таблицы в MessageBox
+                    /*string message = "Хеш-таблица volumeTradeDataHash:\n";
+                    foreach (var key in volumeTradeDataHash.Keys)
+                    {
+                        var securityTradingHistory = (SecurityTradingHistory)volumeTradeDataHash[key];
+                        message += $"Key: {key}, Value: {securityTradingHistory.BoardID}, {securityTradingHistory.TradeDate}, {securityTradingHistory.NumTrade}, {securityTradingHistory.Volume}\n"; 
+                    }
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
-
-                    finance.GetTradingHistory(symbol, startDate,endDate);
                 }
                 else
                 {

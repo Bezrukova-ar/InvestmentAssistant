@@ -22,6 +22,10 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
+        FinanceAPI finance = new FinanceAPI();
+
+
+
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
@@ -40,7 +44,6 @@ namespace InvestmentAssistant.Pages
         {
             InitializeComponent();
             autoComboBox.IsEditable = true;
-         
         }
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
@@ -235,6 +238,9 @@ namespace InvestmentAssistant.Pages
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
                     candlestickChart.LegendLocation = LegendLocation.None;
                     candlestickChart.Visibility = Visibility;
+
+
+                    finance.GetTradingHistory(symbol, startDate,endDate);
                 }
                 else
                 {

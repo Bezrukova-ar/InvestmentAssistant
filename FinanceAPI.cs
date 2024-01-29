@@ -81,6 +81,18 @@ namespace InvestmentAssistant
             }
             return candlestickDataList;
         }
+
+        public async Task<string> GetTradingHistory(string symbol, DateTime startDate, DateTime endDate)
+        {
+            string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}/trades.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+            response.EnsureSuccessStatusCode();
+
+            string responseData = await response.Content.ReadAsStringAsync();
+
+            return responseData;
+        }
     }
 }
 

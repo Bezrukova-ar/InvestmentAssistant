@@ -72,9 +72,9 @@
             </Border>
             <!--В данном поле отображается график общего объема торгов на рынке, за выбранный период-->
             <Border  Grid.Row="0" Grid.Column="2"  
-                     Background="#FFF1F9FF" 
+                    Background="#FFFAF9FF"  
                      Margin="5" CornerRadius="10"
-                     BorderBrush="#FFE1F1FD"
+                     BorderBrush="#FFEDE9FF"
                      BorderThickness="2">
             </Border>
             <!--В данном поле отображается  наиболее выросшие и упавшие акции за день (текст)-->
@@ -93,9 +93,9 @@
             </Border>
             <!--В данном поле будет отображаться что-то, пока не решила-->
             <Border  Grid.Row="2" Grid.Column="0"  
-                     Background="#FFFFFDF3" 
+                      Background="#FFF1F9FF" 
                      Margin="5" CornerRadius="10"
-                     BorderBrush="#FFFFF8E0"
+                     BorderBrush="#FFE1F1FD"
                      BorderThickness="2">
             </Border>
         </Grid>

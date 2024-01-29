@@ -63,7 +63,7 @@
                     
                     <!--Свечевой график-->
                     <Grid Grid.Row="1" Grid.ColumnSpan="3">
-                        <lvc:CartesianChart x:Name="candlestickChart" Margin="5" Visibility="Hidden">
+                        <lvc:CartesianChart x:Name="candlestickChart" Margin="5" Visibility="Hidden" ZoomingSpeed="10" Zoom="X">
                             
                         </lvc:CartesianChart>
                     </Grid>

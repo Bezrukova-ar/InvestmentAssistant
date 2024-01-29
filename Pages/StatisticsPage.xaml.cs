@@ -30,6 +30,8 @@ namespace InvestmentAssistant.Pages
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
         public static Hashtable candlestickChartDataHash = new Hashtable();
+        /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения графика объема сделок </summary>
+        public static Hashtable volumeTradeDataHash = new Hashtable();
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
         /// <summary> Название ценной бумаги </summary>
@@ -238,6 +240,8 @@ namespace InvestmentAssistant.Pages
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
                     candlestickChart.LegendLocation = LegendLocation.None;
                     candlestickChart.Visibility = Visibility;
+
+
 
 
                     finance.GetTradingHistory(symbol, startDate,endDate);

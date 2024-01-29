@@ -54,12 +54,27 @@ namespace InvestmentAssistant
         {
             var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
 
-             int index = 0;
+             int index = 1;
              foreach (var candlestickData in candlestickDataList)
              {
                  candlestickChartDataHash.Add(index++, candlestickData);
              }
             
+        }
+
+        /// <summary>
+        /// Метод для заполнения данными для построения графика объема сделок
+        /// </summary>
+        public async Task FillVolumeTradeDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable volumeTradeDataHash)
+        {
+            var securityTradingHistoryList = await financeAPI.GetTradingHistory(symbol, startDate, endDate);
+
+            int index = 1;
+            foreach (var securityTradingHistory in securityTradingHistoryList)
+            {
+                volumeTradeDataHash.Add(index++, securityTradingHistory);
+            }
+
         }
     }
 }

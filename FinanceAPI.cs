@@ -82,16 +82,32 @@ namespace InvestmentAssistant
             return candlestickDataList;
         }
 
-        public async Task<string> GetTradingHistory(string symbol, DateTime startDate, DateTime endDate)
+        public async Task<List<SecurityTradingHistory>> GetTradingHistory(string symbol, DateTime startDate, DateTime endDate)
         {
             string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}/trades.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}";
-
             HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
             response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
 
-            string responseData = await response.Content.ReadAsStringAsync();
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["history"]["columns"].ToObject<List<string>>();
+            var data = json["history"]["data"].ToObject<List<List<object>>>();
 
-            return responseData;
+            // Сопоставление данных с объектами CandlestickData
+            List<SecurityTradingHistory> securityTradingHistoryList = new List<SecurityTradingHistory>();
+            foreach (var item in data)
+            {
+                var securityTradingHistory = new SecurityTradingHistory
+                {
+                    BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
+                    TradeDate=DateTime.Parse(item[columns.IndexOf("TRADEDATE")].ToString()),
+                    NumTrade=Convert.ToInt32(item[columns.IndexOf("NUMTRADES")]),
+                    Volume = Convert.ToDouble(item[columns.IndexOf("VOLUME")])
+                };
+                 securityTradingHistoryList.Add(securityTradingHistory);
+            }
+
+            return securityTradingHistoryList;
         }
     }
 }

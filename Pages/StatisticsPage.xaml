@@ -76,8 +76,18 @@
                      BorderBrush="#FFEDE9FF"
                      BorderThickness="2">
                 <Grid>
-                    <lvc:CartesianChart Name="Chart" LegendLocation="Top" Zoom="X">
-                        <!-- Здесь будут отображаться графики -->
+                    <!--<lvc:CartesianChart Name="Chart" LegendLocation="Top" Zoom="X">
+                        --><!-- Здесь будут отображаться графики --><!--
+                    </lvc:CartesianChart>-->
+
+                    <lvc:CartesianChart Name="volumeChart" LegendLocation="Top" Visibility="Hidden">
+                        
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Дата торгов" Labels="{Binding XLabels}" />
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Значения торгов" />
+                        </lvc:CartesianChart.AxisY>
                     </lvc:CartesianChart>
                 </Grid>
             </Border>

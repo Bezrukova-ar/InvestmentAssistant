@@ -251,83 +251,19 @@ namespace InvestmentAssistant.Pages
                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
 
-                    // Автоматическое создание ключей из уникальных BoardID
-                    // var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
-                    // var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
-
-                    /*var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
-                    foreach (var boardID in uniqueBoardIDs)
+                    var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                    foreach (string boardID in uniqueBoardIDs)
                     {
-                        var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
-
-                        var chartValues = new ChartValues<double>();
-                        var labels = new List<string>();
-
-                        foreach (var data in tradingData)
-                        {
-                            chartValues.Add(data.Volume);
-                            labels.Add(data.TradeDate.ToShortDateString());
-                        }
-
-                        chart.Series.Add(new LineSeries
+                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                        var series = new LineSeries
                         {
                             Title = boardID,
-                            Values = chartValues,
-                            PointGeometry = null,
-                            DataLabels = true
-                        });
-
-                        chart.AxisX.Add(new Axis
-                        {
-                            Title = "Trade Date",
-                            Labels = labels
-                        });
-
-                        chart.AxisY.Add(new Axis
-                        {
-                            Title = "Volume"
-                        });
-                    }*/
-
-                    var uniqueBoardIDs = volumeTradeDataHash.Values
-                    .Cast<SecurityTradingHistory>()
-                    .Select(x => x.BoardID)
-                    .Distinct();
-
-                    var chart = new CartesianChart
-                    {
-                        Series = new SeriesCollection(),
-                        AxisX = new AxesCollection { new Axis { Title = "Trade Date" } },
-                        AxisY = new AxesCollection { new Axis { Title = "Количество сделок" } }
-                    };
-
-                    foreach (var boardID in uniqueBoardIDs)
-                    {
-                        var tradingData = volumeTradeDataHash.Values
-                            .Cast<SecurityTradingHistory>()
-                            .Where(x => x.BoardID == boardID)
-                            .OrderBy(x => x.TradeDate)
-                            .ToList();
-
-                        var chartValues = new ChartValues<double>();
-                        var labels = new List<string>();
-
-                        foreach (var data in tradingData)
-                        {
-                            chartValues.Add(data.Volume);
-                            labels.Add(data.TradeDate.ToShortDateString());
-                        }
-
-                        chart.Series.Add(new LineSeries
-                        {
-                            Title = boardID,
-                            Values = chartValues,
-                            PointGeometry = null,
-                            DataLabels = true
-                        });
-
+                            Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
+                        };
+                        volumeChart.Series.Add(series);
                     }
-                    Chart.Content = chart;
+                    volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
+                    volumeChart.Visibility = Visibility;
                 }
                 else
                 {

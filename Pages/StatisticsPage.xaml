@@ -76,7 +76,7 @@
                      BorderBrush="#FFEDE9FF"
                      BorderThickness="2">
                 <Grid>
-                    <lvc:CartesianChart Name="chart" LegendLocation="Top" Zoom="X">
+                    <lvc:CartesianChart Name="Chart" LegendLocation="Top" Zoom="X">
                         <!-- Здесь будут отображаться графики -->
                     </lvc:CartesianChart>
                 </Grid>

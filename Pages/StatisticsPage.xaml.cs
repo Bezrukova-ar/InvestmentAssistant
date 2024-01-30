@@ -254,7 +254,8 @@ namespace InvestmentAssistant.Pages
                     // Автоматическое создание ключей из уникальных BoardID
                     // var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
                     // var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
-                    var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+
+                    /*var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
                     foreach (var boardID in uniqueBoardIDs)
                     {
                         var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
@@ -286,7 +287,47 @@ namespace InvestmentAssistant.Pages
                         {
                             Title = "Volume"
                         });
+                    }*/
+
+                    var uniqueBoardIDs = volumeTradeDataHash.Values
+                    .Cast<SecurityTradingHistory>()
+                    .Select(x => x.BoardID)
+                    .Distinct();
+
+                    var chart = new CartesianChart
+                    {
+                        Series = new SeriesCollection(),
+                        AxisX = new AxesCollection { new Axis { Title = "Trade Date" } },
+                        AxisY = new AxesCollection { new Axis { Title = "Количество сделок" } }
+                    };
+
+                    foreach (var boardID in uniqueBoardIDs)
+                    {
+                        var tradingData = volumeTradeDataHash.Values
+                            .Cast<SecurityTradingHistory>()
+                            .Where(x => x.BoardID == boardID)
+                            .OrderBy(x => x.TradeDate)
+                            .ToList();
+
+                        var chartValues = new ChartValues<double>();
+                        var labels = new List<string>();
+
+                        foreach (var data in tradingData)
+                        {
+                            chartValues.Add(data.Volume);
+                            labels.Add(data.TradeDate.ToShortDateString());
+                        }
+
+                        chart.Series.Add(new LineSeries
+                        {
+                            Title = boardID,
+                            Values = chartValues,
+                            PointGeometry = null,
+                            DataLabels = true
+                        });
+
                     }
+                    Chart.Content = chart;
                 }
                 else
                 {

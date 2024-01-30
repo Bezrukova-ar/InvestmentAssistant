@@ -240,27 +240,21 @@ namespace InvestmentAssistant.Pages
                     candlestickChart.Visibility = Visibility;
 
 
+
+
                     await financeDataHandler.FillVolumeTradeDataHash(symbol, startDate, endDate, volumeTradeDataHash);
-                    // Отображение значения хеш-таблицы в MessageBox
-                    /*string message = "Хеш-таблица volumeTradeDataHash:\n";
-                    foreach (var key in volumeTradeDataHash.Keys)
-                    {
-                        var securityTradingHistory = (SecurityTradingHistory)volumeTradeDataHash[key];
-                        message += $"Key: {key}, Value: {securityTradingHistory.BoardID}, {securityTradingHistory.TradeDate}, {securityTradingHistory.NumTrade}, {securityTradingHistory.Volume}\n"; 
-                    }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
-
-
+                    volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
                     var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
                     foreach (string boardID in uniqueBoardIDs)
                     {
-                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderByDescending(x => x.TradeDate).ToList();
                         var series = new LineSeries
                         {
                             Title = boardID,
                             Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
                         };
                         volumeChart.Series.Add(series);
+                        valuesForBoardID.Clear();
                     }
                     volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
                     volumeChart.Visibility = Visibility;

@@ -56,12 +56,6 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\MaterialDesignThemes.Wpf.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.pdb
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\Microsoft.Xaml.Behaviors.xml
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.dll
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.dll
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.Shared.dll
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.xml
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.xml
-C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\OxyPlot.Wpf.Shared.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.dll
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.Wpf.dll
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\LiveCharts.pdb

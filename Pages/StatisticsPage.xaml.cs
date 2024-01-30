@@ -1,9 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+
 
 namespace InvestmentAssistant.Pages
 {
@@ -22,6 +19,9 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
+
+
+
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
@@ -193,7 +193,7 @@ namespace InvestmentAssistant.Pages
             {
                 if (startDate != null && endDate != null)
                 {
-                    
+
                     candlestickChartDataHash.Clear();
                     volumeTradeDataHash.Clear();
 
@@ -206,33 +206,33 @@ namespace InvestmentAssistant.Pages
                         message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
                     }
                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
-                    
-                    var plotModel = new CartesianChart{};
 
-                     // Создание серии свечей
-                     var candlestickSeries = new CandleSeries
-                     {
-                         Values = new ChartValues<OhlcPoint>()
-                     };
+                    var plotModel = new CartesianChart { };
 
-                     // Сортировка элементов хеш-таблицы по ключу
-                     var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
+                    // Создание серии свечей
+                    var candlestickSeries = new CandleSeries
+                    {
+                        Values = new ChartValues<OhlcPoint>()
+                    };
 
-                     // Заполнение серии данными из отсортированной хеш-таблицы
-                     foreach (DictionaryEntry entry in sortedEntries)
-                     {
-                         var candlestickData = (CandlestickData)entry.Value;
-                         candlestickSeries.Values.Add(new OhlcPoint
-                         {
-                             High = (double)candlestickData.High,
-                             Low = (double)candlestickData.Low,
-                             Open = (double)candlestickData.Open,
-                             Close = (double)candlestickData.Close
-                         });
-                     }
+                    // Сортировка элементов хеш-таблицы по ключу
+                    var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
 
-                     // Добавление серии к модели
-                     plotModel.Series.Add(candlestickSeries);
+                    // Заполнение серии данными из отсортированной хеш-таблицы
+                    foreach (DictionaryEntry entry in sortedEntries)
+                    {
+                        var candlestickData = (CandlestickData)entry.Value;
+                        candlestickSeries.Values.Add(new OhlcPoint
+                        {
+                            High = (double)candlestickData.High,
+                            Low = (double)candlestickData.Low,
+                            Open = (double)candlestickData.Open,
+                            Close = (double)candlestickData.Close
+                        });
+                    }
+
+                    // Добавление серии к модели
+                    plotModel.Series.Add(candlestickSeries);
 
                     // Привязка модели к CartesianChart
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
@@ -250,6 +250,43 @@ namespace InvestmentAssistant.Pages
                     }
                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
+
+                    // Автоматическое создание ключей из уникальных BoardID
+                    // var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                    // var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                    var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                    foreach (var boardID in uniqueBoardIDs)
+                    {
+                        var tradingData = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+
+                        var chartValues = new ChartValues<double>();
+                        var labels = new List<string>();
+
+                        foreach (var data in tradingData)
+                        {
+                            chartValues.Add(data.Volume);
+                            labels.Add(data.TradeDate.ToShortDateString());
+                        }
+
+                        chart.Series.Add(new LineSeries
+                        {
+                            Title = boardID,
+                            Values = chartValues,
+                            PointGeometry = null,
+                            DataLabels = true
+                        });
+
+                        chart.AxisX.Add(new Axis
+                        {
+                            Title = "Trade Date",
+                            Labels = labels
+                        });
+
+                        chart.AxisY.Add(new Axis
+                        {
+                            Title = "Volume"
+                        });
+                    }
                 }
                 else
                 {

@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
-      xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" xmlns:lvc1="clr-namespace:OxyPlot.Axes;assembly=OxyPlot"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -76,6 +75,11 @@
                      Margin="5" CornerRadius="10"
                      BorderBrush="#FFEDE9FF"
                      BorderThickness="2">
+                <Grid>
+                    <lvc:CartesianChart Name="chart" LegendLocation="Top" Zoom="X">
+                        <!-- Здесь будут отображаться графики -->
+                    </lvc:CartesianChart>
+                </Grid>
             </Border>
             <!--В данном поле отображается  наиболее выросшие и упавшие акции за день (текст)-->
             <Border  Grid.Row="1" Grid.Column="2"  

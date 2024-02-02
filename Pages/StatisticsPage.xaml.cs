@@ -263,13 +263,13 @@ namespace InvestmentAssistant.Pages
 
 
                     await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
-                    string message = "Хеш-таблица PriceChangeHashTable:\n";
+                   /* string message = "Хеш-таблица PriceChangeHashTable:\n";
                     foreach (var key in priceChangeHashTable.Keys)
                     {
                         var priceChangeData = (SharePriceTodayAndYesterday)priceChangeHashTable[key];
-                        message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}\n"; //и так далее но уже с датой
+                        message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}, {priceChangeData.PercentageChangeInValue}\n"; //и так далее но уже с датой
                     }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
                 }
                 else
                 {

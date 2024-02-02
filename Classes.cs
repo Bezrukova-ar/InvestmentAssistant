@@ -58,5 +58,7 @@ namespace InvestmentAssistant
         public double CurrentValue { get; set; }
         /// <summary> Прошлая стоимость бумаги </summary>
         public double PreviousValue { get; set; }
+        /// <summary> Изменение бумаги в % </summary>
+        public double PercentageChangeInValue { get; set; }
     }
 }

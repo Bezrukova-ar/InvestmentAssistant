@@ -83,7 +83,15 @@ namespace InvestmentAssistant
             int index = 1;
             foreach (var stockInfo in sharePriceTodayAndYesterdayList)
             {
-                priceChangeHashTable.Add(index++, stockInfo);
+                priceChangeHashTable.Add(index++, new SharePriceTodayAndYesterday
+                {
+                    SecurityId = stockInfo.SecurityId,
+                    SecurityName = stockInfo.SecurityName,
+                    BoardID = stockInfo.BoardID,
+                    CurrentValue = stockInfo.CurrentValue,
+                    PreviousValue = stockInfo.PreviousValue,
+                    PercentageChangeInValue= ((stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue ) * 100
+                });
             }
         }
     } 

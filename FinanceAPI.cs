@@ -110,9 +110,9 @@ namespace InvestmentAssistant
             return securityTradingHistoryList;
         }
 
-       public async Task<List<SharePriceTodayAndYesterday>> GetStockInfo()
-       {
-            string requestUri = $"engines/stock/markets/shares/securities.json?iss.only=securities&securities.columns=SECID,CBOARDID,CSECNAME,CPREVPRICE,PREVWAPRICE";
+        public async Task<List<SharePriceTodayAndYesterday>> GetStockInfo()
+        {
+            string requestUri = $"engines/stock/markets/shares/securities.json?";
             HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -129,7 +129,7 @@ namespace InvestmentAssistant
                 {
                     SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
                     BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
-                    SecurityName = Convert.ToString(item[columns.IndexOf("BOARDID")].ToString()),
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SHORTNAME")].ToString()),
                     CurrentValue = Convert.ToDouble(item[columns.IndexOf("PREVPRICE")]),
                     PreviousValue = Convert.ToDouble(item[columns.IndexOf("PREVWAPRICE")])
                 };

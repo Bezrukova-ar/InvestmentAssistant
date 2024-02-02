@@ -19,8 +19,7 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
-
-
+        
 
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
@@ -28,6 +27,8 @@ namespace InvestmentAssistant.Pages
         public static Hashtable candlestickChartDataHash = new Hashtable();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения графика объема сделок </summary>
         public static Hashtable volumeTradeDataHash = new Hashtable();
+        /// <summary>  Статическая хэш-таблица, которая будет хранить информацию о ценных бумагах </summary>
+        public static Hashtable priceChangeHashTable = new Hashtable();
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
         /// <summary> Название ценной бумаги </summary>
@@ -258,6 +259,17 @@ namespace InvestmentAssistant.Pages
                     }
                     volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
                     volumeChart.Visibility = Visibility;
+
+
+
+                    await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
+                    string message = "Хеш-таблица PriceChangeHashTable:\n";
+                    foreach (var key in priceChangeHashTable.Keys)
+                    {
+                        var priceChangeData = (SharePriceTodayAndYesterday)priceChangeHashTable[key];
+                        message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}\n"; //и так далее но уже с датой
+                    }
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {

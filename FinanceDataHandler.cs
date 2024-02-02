@@ -1,6 +1,6 @@
-﻿using System;
+﻿using InvestmentAssistant.Pages;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -76,5 +76,15 @@ namespace InvestmentAssistant
             }
 
         }
-    }
+
+        public async Task FillThePriceChangeHashTable(Hashtable priceChangeHashTable)
+        {
+            var sharePriceTodayAndYesterdayList = await financeAPI.GetStockInfo();
+            int index = 1;
+            foreach (var stockInfo in sharePriceTodayAndYesterdayList)
+            {
+                priceChangeHashTable.Add(index++, stockInfo);
+            }
+        }
+    } 
 }

@@ -93,7 +93,7 @@ namespace InvestmentAssistant
             var columns = json["history"]["columns"].ToObject<List<string>>();
             var data = json["history"]["data"].ToObject<List<List<object>>>();
 
-            // Сопоставление данных с объектами CandlestickData
+            // Сопоставление данных с объектами securityTradingHistoryList
             List<SecurityTradingHistory> securityTradingHistoryList = new List<SecurityTradingHistory>();
             foreach (var item in data)
             {
@@ -110,7 +110,35 @@ namespace InvestmentAssistant
             return securityTradingHistoryList;
         }
 
+       public async Task<List<SharePriceTodayAndYesterday>> GetStockInfo()
+       {
+            string requestUri = $"engines/stock/markets/shares/securities.json?iss.only=securities&securities.columns=SECID,CBOARDID,CSECNAME,CPREVPRICE,PREVWAPRICE";
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
 
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["securities"]["columns"].ToObject<List<string>>();
+            var data = json["securities"]["data"].ToObject<List<List<object>>>();
+
+            // Сопоставление данных с объектами securityTradingHistoryList
+            List<SharePriceTodayAndYesterday> sharePriceTodayAndYesterdayList = new List<SharePriceTodayAndYesterday>();
+            foreach (var item in data)
+            {
+                var sharePriceTodayAndYesterday = new SharePriceTodayAndYesterday
+                {
+                    SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
+                    BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
+                    SecurityName = Convert.ToString(item[columns.IndexOf("BOARDID")].ToString()),
+                    CurrentValue = Convert.ToDouble(item[columns.IndexOf("PREVPRICE")]),
+                    PreviousValue = Convert.ToDouble(item[columns.IndexOf("PREVWAPRICE")])
+                };
+                sharePriceTodayAndYesterdayList.Add(sharePriceTodayAndYesterday);
+            }
+
+            return sharePriceTodayAndYesterdayList;
+
+        }
     }
 }
 

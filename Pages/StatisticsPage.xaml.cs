@@ -43,6 +43,40 @@ namespace InvestmentAssistant.Pages
         {
             InitializeComponent();
             autoComboBox.IsEditable = true;
+            Loaded += StatisticsPage_Loaded;
+
+
+        }
+
+        private async void StatisticsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
+            /*string message = "Хеш-таблица PriceChangeHashTable:\n";
+             foreach (var key in priceChangeHashTable.Keys)
+             {
+                 var priceChangeData = (SharePriceTodayAndYesterday)priceChangeHashTable[key];
+                 message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}, {priceChangeData.PercentageChangeInValue}\n"; //и так далее но уже с датой
+             }
+             MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+            //Самые выросшие акции
+              var topRisingStocks = priceChangeHashTable.Values.Cast<SharePriceTodayAndYesterday>()
+                  .OrderByDescending(x => x.PercentageChangeInValue)
+                  .Take(7)
+                  .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)} ")
+                  .ToList();
+             //string message = "Топ 3 растущих акций:\n" + string.Join("\n", topRisingStocks);
+            // MessageBox.Show(message);
+            TopRisingStocks.Text = string.Join(Environment.NewLine, topRisingStocks);
+
+
+            var topFallingStocks = priceChangeHashTable.Values.Cast<SharePriceTodayAndYesterday>()
+                 .OrderBy(x => x.PercentageChangeInValue)
+                 .Take(7)
+                 .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)}")
+                 .ToList();
+            //string message = "Топ 3 растущих акций:\n" + string.Join("\n", topRisingStocks);
+            // MessageBox.Show(message);
+            TopFallingStocks.Text = string.Join(Environment.NewLine, topFallingStocks);
         }
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
@@ -94,19 +128,6 @@ namespace InvestmentAssistant.Pages
             autoComboBox.IsDropDownOpen = true;
             autoComboBox.Text = newText;
             e.Handled = true;
-
-            /* string newText = autoComboBox.Text + e.Text;
-             var filteredSecurities = MainWindow.securitiesHashTable.Values
-                 .Cast<NameOfSecurities>()
-                 .Where(security =>
-                     security.SecurityName.ToLower().Contains(newText.ToLower()))
-                 .Select(security => security.SecurityName)
-                 .ToList();
-             autoComboBox.ItemsSource = filteredSecurities;
-             autoComboBox.IsDropDownOpen = true;
-             autoComboBox.Text = newText;
-             e.Handled = true;      */
-
         }
 
         private void autoComboBox_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -259,17 +280,7 @@ namespace InvestmentAssistant.Pages
                     }
                     volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
                     volumeChart.Visibility = Visibility;
-
-
-
-                    await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
-                   /* string message = "Хеш-таблица PriceChangeHashTable:\n";
-                    foreach (var key in priceChangeHashTable.Keys)
-                    {
-                        var priceChangeData = (SharePriceTodayAndYesterday)priceChangeHashTable[key];
-                        message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}, {priceChangeData.PercentageChangeInValue}\n"; //и так далее но уже с датой
-                    }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                  
                 }
                 else
                 {

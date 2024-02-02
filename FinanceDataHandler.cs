@@ -83,15 +83,25 @@ namespace InvestmentAssistant
             int index = 1;
             foreach (var stockInfo in sharePriceTodayAndYesterdayList)
             {
-                priceChangeHashTable.Add(index++, new SharePriceTodayAndYesterday
+
+                if (stockInfo.CurrentValue != stockInfo.PreviousValue|| stockInfo.PreviousValue !=0)
                 {
-                    SecurityId = stockInfo.SecurityId,
-                    SecurityName = stockInfo.SecurityName,
-                    BoardID = stockInfo.BoardID,
-                    CurrentValue = stockInfo.CurrentValue,
-                    PreviousValue = stockInfo.PreviousValue,
-                    PercentageChangeInValue= ((stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue ) * 100
-                });
+                    double percentageChange = (stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue * 100;
+                    if (!double.IsInfinity(percentageChange))
+                    {
+                        priceChangeHashTable.Add(index++, new SharePriceTodayAndYesterday
+                        {
+                            SecurityId = stockInfo.SecurityId,
+                            SecurityName = stockInfo.SecurityName,
+                            BoardID = stockInfo.BoardID,
+                            CurrentValue = stockInfo.CurrentValue,
+                            PreviousValue = stockInfo.PreviousValue,
+                            PercentageChangeInValue = percentageChange
+                        });
+
+                    }
+                    else { }
+                }
             }
         }
     } 

@@ -60,5 +60,10 @@ namespace InvestmentAssistant
         public double PreviousValue { get; set; }
         /// <summary> Изменение бумаги в % </summary>
         public double PercentageChangeInValue { get; set; }
+
+        public static explicit operator SharePriceTodayAndYesterday(double v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

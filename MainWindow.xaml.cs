@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InvestmentAssistant.Pages;
+using System;
 using System.Collections;
 using System.Windows;
 
@@ -11,9 +12,13 @@ namespace InvestmentAssistant
     /// </summary>
     public partial class MainWindow : Window
     {
+        private StatisticsPage statisticsPage = new StatisticsPage();
+        private PrimaryInvestmentPortfolioPage primaryInvestmentPortfolioPage = new PrimaryInvestmentPortfolioPage();
+        private InvestmentPortfolioOptimizationPage investmentPortfolioOptimizationPage = new InvestmentPortfolioOptimizationPage();
+        private HandbookPage handbookPage = new HandbookPage();
+
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
-
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию о ценных бумагах </summary>
         public static Hashtable securitiesHashTable = new Hashtable();
 
@@ -48,25 +53,27 @@ namespace InvestmentAssistant
         /// <summary> Навигация по приложению, открытие страницы со статистикой </summary>
         private void rdStatistics_Click(object sender, RoutedEventArgs e)
         {
-            PagesNavigation.Navigate(new Uri("Pages/StatisticsPage.xaml", UriKind.RelativeOrAbsolute));
+            PagesNavigation.Content = statisticsPage;
         }
 
         /// <summary> Навигация по приложению, открытие страницы для формирования первичного портфеля </summary>
         private void rdPrimaryInvestmentPortfolio_Click(object sender, RoutedEventArgs e)
         {
-            PagesNavigation.Navigate(new Uri("Pages/PrimaryInvestmentPortfolioPage.xaml", UriKind.RelativeOrAbsolute));
+            PagesNavigation.Content = primaryInvestmentPortfolioPage;
         }
 
         /// <summary> Навигация по приложению, открытие страницы для оптимизации имеющегося портфеля </summary>
         private void rdInvestmentPortfolioOptimization_Click(object sender, RoutedEventArgs e)
         {
-            PagesNavigation.Navigate(new Uri("Pages/InvestmentPortfolioOptimizationPage.xaml", UriKind.RelativeOrAbsolute));
+            // PagesNavigation.Navigate(new Uri("Pages/InvestmentPortfolioOptimizationPage.xaml", UriKind.RelativeOrAbsolute));
+            PagesNavigation.Content = investmentPortfolioOptimizationPage;
         }
 
         /// <summary> Навигация по приложению, открытие страницы со справочной информацией </summary>
         private void rdHandbook_Click(object sender, RoutedEventArgs e)
         {
-            PagesNavigation.Navigate(new Uri("Pages/HandbookPage.xaml", UriKind.RelativeOrAbsolute));
+            //PagesNavigation.Navigate(new Uri("Pages/HandbookPage.xaml", UriKind.RelativeOrAbsolute));
+            PagesNavigation.Content = handbookPage;
         }
 
         /// <summary> Вызов метода для загрузки данных о ценных бумагах </summary>

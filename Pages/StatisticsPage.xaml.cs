@@ -247,7 +247,7 @@ namespace InvestmentAssistant.Pages
                     var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
                     foreach (string boardID in uniqueBoardIDs)
                     {
-                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderByDescending(x => x.TradeDate).ToList();
+                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
                         var series = new LineSeries
                         {
                             Title = boardID,

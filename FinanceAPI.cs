@@ -109,6 +109,8 @@ namespace InvestmentAssistant
 
             return securityTradingHistoryList;
         }
+
+
     }
 }
 

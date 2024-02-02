@@ -51,24 +51,18 @@ namespace InvestmentAssistant.Pages
         private async void StatisticsPage_Loaded(object sender, RoutedEventArgs e)
         {
             await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
-            /*string message = "Хеш-таблица PriceChangeHashTable:\n";
-             foreach (var key in priceChangeHashTable.Keys)
-             {
-                 var priceChangeData = (SharePriceTodayAndYesterday)priceChangeHashTable[key];
-                 message += $"Key: {key}, Value: {priceChangeData.SecurityId}, {priceChangeData.BoardID}, {priceChangeData.SecurityName},  {priceChangeData.CurrentValue}, {priceChangeData.PreviousValue}, {priceChangeData.PercentageChangeInValue}\n"; //и так далее но уже с датой
-             }
-             MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+
             //Самые выросшие акции
               var topRisingStocks = priceChangeHashTable.Values.Cast<SharePriceTodayAndYesterday>()
                   .OrderByDescending(x => x.PercentageChangeInValue)
                   .Take(7)
-                  .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)} ")
+                  .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)}")
                   .ToList();
              //string message = "Топ 3 растущих акций:\n" + string.Join("\n", topRisingStocks);
             // MessageBox.Show(message);
             TopRisingStocks.Text = string.Join(Environment.NewLine, topRisingStocks);
 
-
+            //самые упавшие акции
             var topFallingStocks = priceChangeHashTable.Values.Cast<SharePriceTodayAndYesterday>()
                  .OrderBy(x => x.PercentageChangeInValue)
                  .Take(7)

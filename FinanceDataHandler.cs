@@ -84,9 +84,9 @@ namespace InvestmentAssistant
             foreach (var stockInfo in sharePriceTodayAndYesterdayList)
             {
 
-                if (stockInfo.CurrentValue != stockInfo.PreviousValue|| stockInfo.PreviousValue !=0)
+                if (stockInfo.CurrentValue != stockInfo.PreviousValue || stockInfo.PreviousValue !=0 || stockInfo.CurrentValue != 0)
                 {
-                    double percentageChange = (stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue * 100;
+                    double percentageChange = ((stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue) * 100;
                     if (!double.IsInfinity(percentageChange))
                     {
                         priceChangeHashTable.Add(index++, new SharePriceTodayAndYesterday
@@ -100,7 +100,6 @@ namespace InvestmentAssistant
                         });
 
                     }
-                    else { }
                 }
             }
         }

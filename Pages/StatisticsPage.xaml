@@ -120,8 +120,8 @@
                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Топ акций (в %):" FontWeight="Heavy" FontSize="18" VerticalAlignment="Center" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS" />
                     <TextBlock Grid.Row="1" Text="Выросшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="Упавшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
-                    <TextBlock x:Name="TopRisingStocks" Grid.Row="2" Grid.Column="0" FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS"/>
-                    <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"/>
+                    <TextBlock x:Name="TopRisingStocks" Grid.Row="2" Grid.Column="0" FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
+                    <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0"/>
                 </Grid>
             </Border>
         </Grid>

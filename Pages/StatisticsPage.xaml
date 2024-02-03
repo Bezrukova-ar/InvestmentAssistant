@@ -86,26 +86,11 @@
                     </lvc:CartesianChart>
                 </Grid>
             </Border>
-            <!--В данном поле будет что-то отображаться-->
-            <Border  Grid.Row="1" Grid.Column="2"  
+            <!--В данном поле будет отображаться топ акций-->
+            <Border  Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" 
                      Background="#FFF1F9FF"
                      Margin="5" CornerRadius="10"
                      BorderBrush="#FFE1F1FD"
-                     BorderThickness="2">
-                
-            </Border>
-            <!--В данном поле отображается  наиболее выросшие и упавшие акции за день (график)-->
-            <Border  Grid.Row="2" Grid.Column="1"  Grid.ColumnSpan="2"
-                      Background="#FFF5FFFD" 
-                    Margin="5" CornerRadius="10"
-                    BorderBrush="#FFE1FDF7" 
-                    BorderThickness="2">
-            </Border>
-            <!--В данном поле будет отображаться что-то, пока не решила-->
-            <Border  Grid.Row="2" Grid.Column="0"  
-                     Background="#FFF5FFFD" 
-                     BorderBrush="#FFE1FDF7"                      
-                     Margin="5" CornerRadius="10"                 
                      BorderThickness="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -120,9 +105,25 @@
                     <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Топ акций (в %):" FontWeight="Heavy" FontSize="18" VerticalAlignment="Center" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS" />
                     <TextBlock Grid.Row="1" Text="Выросшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="Упавшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
-                    <TextBlock x:Name="TopRisingStocks" Grid.Row="2" Grid.Column="0" FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
+                    <TextBlock x:Name="TopRisingStocks"  Grid.Row="2" Grid.Column="0" FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
                     <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0"/>
                 </Grid>
+
+            </Border>
+            <!--В данном поле отображается  наиболее выросшие и упавшие акции за день (график)-->
+            <Border  Grid.Row="2" Grid.Column="1" 
+                      Background="#FFF5FFFD" 
+                    Margin="5" CornerRadius="10"
+                    BorderBrush="#FFE1FDF7" 
+                    BorderThickness="2">
+            </Border>
+            <!--В данном поле будет отображаться что-то, пока не решила-->
+            <Border  Grid.Row="2" Grid.Column="0"  
+                     Background="#FFF5FFFD" 
+                     BorderBrush="#FFE1FDF7"                      
+                     Margin="5" CornerRadius="10"                 
+                     BorderThickness="2">
+                
             </Border>
         </Grid>
     </Border>

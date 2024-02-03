@@ -19,7 +19,6 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
-        
 
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
@@ -279,6 +278,38 @@ namespace InvestmentAssistant.Pages
                     MessageBox.Show("Вы не ввели даты", "Внимание!");
                 }
             }
-        }      
+        }
+
+        private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)
+        {
+            // Выбираем три наиболее выросшие акции по каждому виду торгов
+            var topGainers = priceChangeHashTable.Values
+                .Cast<SharePriceTodayAndYesterday>()
+                .GroupBy(x => x.BoardID)
+                .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
+                .Select(x => new { x.BoardID, x.SecurityName, x.PreviousValue, x.CurrentValue })
+                .ToList();
+
+            // Создание коллекции точек для отображения на диаграмме
+            var columnSeries = new ColumnSeries
+            {
+                Title = "Разница в стоимости",
+                Values = new ChartValues<double>(topGainers.Select(x => x.CurrentValue - x.PreviousValue))
+            };
+
+            // Добавление данных в chart
+            stockChart.Series = new SeriesCollection { columnSeries };
+            stockChart.AxisX.Add(new Axis
+            {
+                Title = "Название ценной бумаги",
+                Labels = topGainers.Select(x => x.SecurityName).ToList()
+            });
+
+        }
+
+        private void barChartOfFallingStocks_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

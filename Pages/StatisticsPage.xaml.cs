@@ -20,6 +20,15 @@ namespace InvestmentAssistant.Pages
     public partial class StatisticsPage : Page
     {
 
+        // Создание модели данных для графика
+        public class GainerData
+        {
+            public string SecurityName { get; set; }
+            public double PercentageChange { get; set; }
+        }
+
+
+
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
@@ -282,28 +291,35 @@ namespace InvestmentAssistant.Pages
 
         private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)
         {
+
             // Выбираем три наиболее выросшие акции по каждому виду торгов
             var topGainers = priceChangeHashTable.Values
                 .Cast<SharePriceTodayAndYesterday>()
                 .GroupBy(x => x.BoardID)
                 .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
-                .Select(x => new { x.BoardID, x.SecurityName, x.PreviousValue, x.CurrentValue })
+                .Select(x => new { x.BoardID, x.SecurityName, x.PercentageChangeInValue })
                 .ToList();
 
-            // Создание коллекции точек для отображения на диаграмме
-            var columnSeries = new ColumnSeries
+            // Преобразование данных topGainers в GainerData
+            var chartData = topGainers.Select(x => new GainerData
             {
-                Title = "Разница в стоимости",
-                Values = new ChartValues<double>(topGainers.Select(x => x.CurrentValue - x.PreviousValue))
-            };
+                SecurityName = x.SecurityName,
+                PercentageChange = x.PercentageChangeInValue
+            }).ToList();
 
-            // Добавление данных в chart
-            stockChart.Series = new SeriesCollection { columnSeries };
-            stockChart.AxisX.Add(new Axis
+            // Создание экземпляра SeriesCollection для хранения данных графика
+            SeriesCollection series = new SeriesCollection();
+
+            // Добавление данных графика
+            foreach (var data in chartData)
             {
-                Title = "Название ценной бумаги",
-                Labels = topGainers.Select(x => x.SecurityName).ToList()
-            });
+                series.Add(new ColumnSeries
+                {
+                    Title = data.SecurityName,
+                    Values = new ChartValues<double> { data.PercentageChange }
+                });
+            }
+            stockChart.Series = series;
 
         }
 

@@ -53,12 +53,6 @@ namespace InvestmentAssistant.Pages
             await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
 
             //Самые выросшие акции
-            /* var topRisingStocks = priceChangeHashTable.Values.Cast<SharePriceTodayAndYesterday>()
-                 .OrderByDescending(x => x.PercentageChangeInValue)
-                 .Take(7)
-                 .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)}")
-                 .ToList();
-           TopRisingStocks.Text = string.Join(Environment.NewLine, topRisingStocks);*/
             var topRisingStocksByBoard = priceChangeHashTable.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
@@ -74,7 +68,7 @@ namespace InvestmentAssistant.Pages
                  .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(3))
                  .Select(x => $"Группа торгов: {x.BoardID}\nНазвание:{x.SecurityName}\n{Math.Round(x.PercentageChangeInValue, 2)}")
                  .ToList();
-            TopFallingStocks.Text += string.Join(Environment.NewLine, topFallingStocks);
+            TopFallingStocks.Text += string.Join(Environment.NewLine + Environment.NewLine, topFallingStocks);
         }
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 

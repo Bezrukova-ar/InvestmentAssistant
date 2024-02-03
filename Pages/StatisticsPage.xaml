@@ -86,28 +86,13 @@
                     </lvc:CartesianChart>
                 </Grid>
             </Border>
-            <!--В данном поле будет отображаться топ акций-->
+            <!--В данном поле будет отображаться  чтото-->
             <Border  Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" 
                      Background="#FFF1F9FF"
                      Margin="5" CornerRadius="10"
                      BorderBrush="#FFE1F1FD"
                      BorderThickness="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="AUTO"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Топ акций (в %):" FontWeight="Heavy" FontSize="18" VerticalAlignment="Center" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS" />
-                    <TextBlock Grid.Row="1" Text="Выросшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Упавшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
-                    <TextBlock x:Name="TopRisingStocks"  Grid.Row="2" Grid.Column="0" FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
-                    <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0"/>
-                </Grid>
+               
 
             </Border>
             <!--В данном поле отображается  наиболее выросшие и упавшие акции за день (график)-->
@@ -123,7 +108,28 @@
                      BorderBrush="#FFE1FDF7"                      
                      Margin="5" CornerRadius="10"                 
                      BorderThickness="2">
-                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Топ акций (в %):" FontWeight="Heavy" FontSize="18" VerticalAlignment="Center" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS" />
+                    <TextBlock Grid.Row="1" Text="Выросшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Упавшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
+
+
+                    <ScrollViewer  Grid.Row="2" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="TopRisingStocks"  FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
+                    </ScrollViewer>
+                    <ScrollViewer  Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0"/>
+                    </ScrollViewer>
+                </Grid>
             </Border>
         </Grid>
     </Border>

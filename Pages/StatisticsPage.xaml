@@ -123,11 +123,11 @@
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="Упавшие:" FontSize="16" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS"/>
 
 
-                    <ScrollViewer  Grid.Row="2" Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                        <TextBlock x:Name="TopRisingStocks"  FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0"/>
+                    <ScrollViewer  Grid.Row="2" Grid.Column="0" VerticalScrollBarVisibility="Auto" >
+                        <TextBlock x:Name="TopRisingStocks"  FontSize="16" Foreground="#FF363636"  FontFamily="Trebuchet MS" Margin="3,0,0,0" TextWrapping="Wrap"/>
                     </ScrollViewer>
                     <ScrollViewer  Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="TopFallingStocks" Grid.Row="2" Grid.Column="1" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0"/>
+                        <TextBlock x:Name="TopFallingStocks" FontSize="16" Foreground="#FF363636" FontFamily="Trebuchet MS"  Margin="5,0,0,0" TextWrapping="Wrap"/>
                     </ScrollViewer>
                 </Grid>
             </Border>

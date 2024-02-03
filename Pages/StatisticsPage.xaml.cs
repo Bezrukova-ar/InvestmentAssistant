@@ -60,19 +60,19 @@ namespace InvestmentAssistant.Pages
                  .ToList();
            TopRisingStocks.Text = string.Join(Environment.NewLine, topRisingStocks);*/
             var topRisingStocksByBoard = priceChangeHashTable.Values
-                .Cast<SharePriceTodayAndYesterday>()
-                .GroupBy(x => x.BoardID)
-                .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(1))
-                .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)}")
-                .ToList();
-            TopRisingStocks.Text = string.Join(Environment.NewLine, topRisingStocksByBoard);
+                 .Cast<SharePriceTodayAndYesterday>()
+                 .GroupBy(x => x.BoardID)
+                 .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
+                 .Select(x => $"Группа торгов: {x.BoardID}\nНазвание:{x.SecurityName}\n{Math.Round(x.PercentageChangeInValue, 2)}")
+                 .ToList();
+            TopRisingStocks.Text = string.Join(Environment.NewLine + Environment.NewLine, topRisingStocksByBoard);
 
             //самые упавшие акции
             var topFallingStocks = priceChangeHashTable.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
-                 .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(1))
-                 .Select(x => $"{x.SecurityName}: {Math.Round(x.PercentageChangeInValue, 2)}")
+                 .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(3))
+                 .Select(x => $"Группа торгов: {x.BoardID}\nНазвание:{x.SecurityName}\n{Math.Round(x.PercentageChangeInValue, 2)}")
                  .ToList();
             TopFallingStocks.Text += string.Join(Environment.NewLine, topFallingStocks);
         }

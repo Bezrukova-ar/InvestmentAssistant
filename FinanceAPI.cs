@@ -129,7 +129,7 @@ namespace InvestmentAssistant
                 {
                     SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
                     BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
-                    SecurityName = Convert.ToString(item[columns.IndexOf("SHORTNAME")].ToString()), // заменить на SECNAME
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")].ToString()), // заменить на SECNAME
                     CurrentValue = Convert.ToDouble(item[columns.IndexOf("PREVPRICE")]),
                     PreviousValue = Convert.ToDouble(item[columns.IndexOf("PREVWAPRICE")])
                 };

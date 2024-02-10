@@ -1,5 +1,7 @@
 ﻿using LiveCharts;
+using LiveCharts.Configurations;
 using LiveCharts.Defaults;
+using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using System;
 using System.Collections;
@@ -8,7 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Media;
 
 namespace InvestmentAssistant.Pages
 {
@@ -25,8 +27,8 @@ namespace InvestmentAssistant.Pages
         {
             public string SecurityName { get; set; }
             public double PercentageChange { get; set; }
+            public int Index { get; set; }
         }
-
 
 
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
@@ -294,11 +296,50 @@ namespace InvestmentAssistant.Pages
 
             // Выбираем три наиболее выросшие акции по каждому виду торгов
             var topGainers = priceChangeHashTable.Values
-                .Cast<SharePriceTodayAndYesterday>()
-                .GroupBy(x => x.BoardID)
-                .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
-                .Select(x => new { x.BoardID, x.SecurityName, x.PercentageChangeInValue })
-                .ToList();
+                 .Cast<SharePriceTodayAndYesterday>()
+                 .GroupBy(x => x.BoardID)
+                 .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
+                 .Select(x => new { x.BoardID, x.SecurityName, x.PercentageChangeInValue })
+                 .ToList();
+
+
+            // Преобразование данных topGainers в GainerData
+             var chartData = topGainers.Select(x => new GainerData
+             {
+                 SecurityName = x.SecurityName,
+                 PercentageChange = x.PercentageChangeInValue
+             }).ToList();
+
+            // Создание экземпляра SeriesCollection для хранения данных графика
+            SeriesCollection series = new SeriesCollection();
+
+
+           foreach (var data in chartData)
+           {
+               var columnSeries = new ColumnSeries
+               {
+                   Values = new ChartValues<double> { Math.Round(data.PercentageChange, 2) },
+                   DataLabels = true,
+                   LabelPoint = point => $"{point.Y}%", // отображение процентного изменения
+                   Title = data.SecurityName // установка названия акции для этого столбца
+               };
+               series.Add(columnSeries); // добавление столбца в коллекцию
+              stockChart.Series.Add(columnSeries);
+            
+           }
+
+        }
+
+        private void barChartOfFallingStocks_Click(object sender, RoutedEventArgs e)
+        {
+            // Выбираем три наиболее упавшие акции по каждому виду торгов
+            var topGainers = priceChangeHashTable.Values
+                 .Cast<SharePriceTodayAndYesterday>()
+                 .GroupBy(x => x.BoardID)
+                 .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(3))
+                 .Select(x => new { x.BoardID, x.SecurityName, x.PercentageChangeInValue })
+                 .ToList();
+
 
             // Преобразование данных topGainers в GainerData
             var chartData = topGainers.Select(x => new GainerData
@@ -310,22 +351,22 @@ namespace InvestmentAssistant.Pages
             // Создание экземпляра SeriesCollection для хранения данных графика
             SeriesCollection series = new SeriesCollection();
 
-            // Добавление данных графика
+
             foreach (var data in chartData)
             {
-                series.Add(new ColumnSeries
+                var columnSeries = new ColumnSeries
                 {
-                    Title = data.SecurityName,
-                    Values = new ChartValues<double> { data.PercentageChange }
-                });
+                    Values = new ChartValues<double> { Math.Round(data.PercentageChange, 2) },
+                    DataLabels = true,
+                    LabelPoint = point => $"{point.Y}%", // отображение процентного изменения
+                    Title = data.SecurityName // установка названия акции для этого столбца
+                };
+                series.Add(columnSeries); // добавление столбца в коллекцию
+                stockChart.Series.Add(columnSeries);
+
             }
-            stockChart.Series = series;
-
-        }
-
-        private void barChartOfFallingStocks_Click(object sender, RoutedEventArgs e)
-        {
 
         }
     }
+    
 }

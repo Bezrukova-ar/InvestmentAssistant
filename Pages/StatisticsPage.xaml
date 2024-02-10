@@ -112,7 +112,7 @@
                     </Grid.RowDefinitions>
                     <RadioButton x:Name="barChartOfRisingStocks" Click="barChartOfRisingStocks_Click" Grid.Row="0" Grid.Column="0"  Margin="5,0,0,0" Content="Диаграмма выросших акций" FontFamily="Verdana" VerticalContentAlignment="Center" HorizontalAlignment="Left" Background="#FF5F527C" />
                     <RadioButton x:Name="barChartOfFallingStocks" Click="barChartOfFallingStocks_Click" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" Content="Диаграмма упавших акций" FontFamily="Verdana"  VerticalContentAlignment="Center" HorizontalAlignment="Left" Background="#FF5F527C" />
-                    <lvc:CartesianChart Grid.Row="1" Grid.ColumnSpan="2"  Name="stockChart" Margin="5,0,5,5"  Series="{Binding SeriesCollection}"/>
+                    <lvc:CartesianChart Grid.Row="1" Grid.ColumnSpan="2"  Name="stockChart" Margin="5,0,5,5"/> <!--Series="{Binding SeriesCollection}"-->
                 </Grid>
             </Border>
             <!--В данном поле будет отображаться что-то, пока не решила-->

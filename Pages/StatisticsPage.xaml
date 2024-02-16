@@ -104,8 +104,8 @@
 
                     <TextBlock Grid.Row="0"  Text="Волатильность (за год):" FontWeight="Heavy" FontSize="16" VerticalAlignment="Center" Foreground="#FF363636" TextAlignment="Center" FontFamily="Trebuchet MS" />
                     <TextBlock Grid.Row="1" x:Name="standardDeviationTextBlock" Text="Стандартное отклонение" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
-                    <TextBlock Grid.Row="2" x:Name="AverageTrueRangeTextBlock" Text="Средний истинный диапазон" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
-                    <TextBlock Grid.Row="3"  Text="Индекс волатильности" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
+                    <TextBlock Grid.Row="2" x:Name="averageTrueRangeTextBlock" Text="Средний истинный диапазон" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
+                    <TextBlock Grid.Row="3" x:Name="volatilityIndexTextBlock" Text="Индекс волатильности" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
                     <TextBlock Grid.Row="4"  Text="Среднее отклонение" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
                 </Grid>
 

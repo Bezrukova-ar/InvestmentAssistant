@@ -294,7 +294,6 @@ namespace InvestmentAssistant.Pages
 
                     //для стандартного отклонения
                     string result = "";
-                    standardDeviationTextBlock.ToolTip = "";
                     foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
@@ -315,7 +314,6 @@ namespace InvestmentAssistant.Pages
 
                     //для среднего истинного диапазона
                     string result1 = "";
-                    AverageTrueRangeTextBlock.ToolTip = "";
                     foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
@@ -334,8 +332,30 @@ namespace InvestmentAssistant.Pages
                         double ATR = sumATR / numOfDays;
                         result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
                     }
-                    AverageTrueRangeTextBlock.ToolTip = result1;
+                    averageTrueRangeTextBlock.ToolTip = result1;
 
+                    //индекс волатильности
+                    string result2 = "";
+                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    {
+                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                        double sumPercentageDifference = 0;
+                        int numOfDays = group.Count();
+
+                        foreach (var data in group)
+                        {
+                            double high = data.Value.High;
+                            double low = data.Value.Low;
+
+                            sumPercentageDifference += (high - low) / high;
+                        }
+
+                        double volatility = (sumPercentageDifference / numOfDays) * 100;
+                        result2 += $"Индекс волатильности для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                    }
+                    volatilityIndexTextBlock.ToolTip = result2;
+
+                    
                 }
                 else
                 {

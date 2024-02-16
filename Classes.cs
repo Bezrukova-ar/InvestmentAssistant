@@ -61,4 +61,32 @@ namespace InvestmentAssistant
             throw new NotImplementedException();
         }
     }
+
+    // Создание модели данных для графика (не используется там где апи суванье данных)
+    public class GainerData
+    {
+        public string SecurityName { get; set; }
+        public double PercentageChange { get; set; }
+        public int Index { get; set; }
+    }
+
+
+    public class StockDataToCalculateVolatility
+    {
+        /// <summary> Представляет режим торгов </summary>
+        public string BoardID { get; set; }
+        /// <summary> Представляет цену открытия </summary>
+        public double Open { get; set; }
+        /// <summary> Представляет самую низкую цену </summary>
+        public double Low { get; set; }
+        /// <summary> Представляет самую высокую цену </summary>
+        public double High { get; set; }
+        /// <summary> Представляет цену закрытия  </summary>
+        public double Close { get; set; }
+
+
+        /// <summary> Представляет дату торгов  </summary>
+        public DateTime TradeDate { get; set; }
+
+    }
 }

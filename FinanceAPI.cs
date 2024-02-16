@@ -139,6 +139,41 @@ namespace InvestmentAssistant
             return sharePriceTodayAndYesterdayList;
 
         }
+
+        public async Task<List<StockDataToCalculateVolatility>> GetDataToCalculateVolatility(string symbol)
+        {
+            string fromDate = DateTime.Now.AddYears(-1).ToString("yyyy-MM-dd");
+            string toDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}.json?from={fromDate}&till={toDate}";
+
+
+            //string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}.json?start=0&limit=365";
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["history"]["columns"].ToObject<List<string>>();
+            var data = json["history"]["data"].ToObject<List<List<object>>>();
+
+            // Сопоставление данных с объектами StockDataToCalculateVolatility
+            List<StockDataToCalculateVolatility> StockDataToCalculateVolatilityList = new List<StockDataToCalculateVolatility>();
+            foreach (var item in data)
+            {
+                var stockDataToCalculateVolatility = new StockDataToCalculateVolatility
+                {
+                    BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
+                    Open = Convert.ToDouble(item[columns.IndexOf("OPEN")]),
+                    Low = Convert.ToDouble(item[columns.IndexOf("LOW")]),
+                    High = Convert.ToDouble(item[columns.IndexOf("HIGH")]),
+                    Close = Convert.ToDouble(item[columns.IndexOf("CLOSE")]),
+                    TradeDate = DateTime.Parse(item[columns.IndexOf("TRADEDATE")].ToString()),
+                };
+                StockDataToCalculateVolatilityList.Add(stockDataToCalculateVolatility);
+            }
+            return StockDataToCalculateVolatilityList;
+        }
     }
 }
 

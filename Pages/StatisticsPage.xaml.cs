@@ -22,13 +22,8 @@ namespace InvestmentAssistant.Pages
     public partial class StatisticsPage : Page
     {
 
-        // Создание модели данных для графика
-        public class GainerData
-        {
-            public string SecurityName { get; set; }
-            public double PercentageChange { get; set; }
-            public int Index { get; set; }
-        }
+        /// <summary>  Статическая хэш-таблица, я устала писать диплом</summary>
+        public static Hashtable dataToCalculateVolatility = new Hashtable();
 
 
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
@@ -218,8 +213,12 @@ namespace InvestmentAssistant.Pages
                 if (startDate != null && endDate != null)
                 {
 
+                    dataToCalculateVolatility.Clear();
+
+
                     candlestickChartDataHash.Clear();
                     volumeTradeDataHash.Clear();
+
 
                     await financeDataHandler.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
                     // Отображение значения хеш-таблицы в MessageBox
@@ -282,7 +281,21 @@ namespace InvestmentAssistant.Pages
                     }
                     volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
                     volumeChart.Visibility = Visibility;
-                  
+
+
+
+
+
+                    // Расчет волатильности акции
+                    await financeDataHandler.FillStockDataToCalculateVolatility(symbol, dataToCalculateVolatility);
+                    // Отображение значения хеш-таблицы в MessageBox
+                    string message = "Хеш-таблица dataToCalculateVolatility:\n";
+                    foreach (var key in dataToCalculateVolatility.Keys)
+                    {
+                        var candlestickData = (StockDataToCalculateVolatility)dataToCalculateVolatility[key];
+                        message += $"Key: {key}, Value: {candlestickData.BoardID},{candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}\n";
+                    }
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {

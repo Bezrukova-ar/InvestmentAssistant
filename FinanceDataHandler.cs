@@ -103,5 +103,22 @@ namespace InvestmentAssistant
                 }
             }
         }
+
+
+
+        /// <summary>
+        /// Метод для заполнения данными для расчёта волатильности
+        /// </summary>
+        public async Task FillStockDataToCalculateVolatility(string symbol, Hashtable dataToCalculateVolatility)
+        {
+            var stockDataToCalculateVolatilityList = await financeAPI.GetDataToCalculateVolatility(symbol);
+
+            int index = 1;
+            foreach (var stockDataToCalculateVolatility in stockDataToCalculateVolatilityList)
+            {
+                dataToCalculateVolatility.Add(index++, stockDataToCalculateVolatility);
+            }
+
+        }
     } 
 }

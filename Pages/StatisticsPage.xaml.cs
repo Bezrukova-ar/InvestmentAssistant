@@ -198,7 +198,8 @@ namespace InvestmentAssistant.Pages
         {
             startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
             endDate = (DateTime)(endDatePicker.SelectedDate != null ? endDatePicker.SelectedDate : null);
-            nameSecurity = autoComboBox.SelectedItem?.ToString();          
+            nameSecurity = autoComboBox.SelectedItem?.ToString();
+            
 
             if (symbol == null)
             {
@@ -210,6 +211,7 @@ namespace InvestmentAssistant.Pages
             }
             else
             {
+                symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
                 if (startDate != null && endDate != null)
                 {
 
@@ -288,29 +290,11 @@ namespace InvestmentAssistant.Pages
 
                     // Расчет волатильности акции
                     await financeDataHandler.FillStockDataToCalculateVolatility(symbol, dataToCalculateVolatility);
-                    // Отображение значения хеш-таблицы в MessageBox
-                    /*string message = "Хеш-таблица dataToCalculateVolatility:\n";
-                    foreach (var key in dataToCalculateVolatility.Keys)
-                    {
-                        var candlestickData = dataToCalculateVolatility[key];
-                        message += $"Key: {key}, Value: {candlestickData.BoardID},{candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}\n";
-                    }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
-                    /* foreach (var data in dataToCalculateVolatility)
-                     {
-                         int boardID = data.Key;
-                         List<StockDataToCalculateVolatility> stockData = data.Value;
 
-                         double averageClosePrice = stockData.Average(x => x.Close);
-                         int numDays = stockData.Count;
 
-                         double sum = stockData.Sum(x => Math.Pow(x.Close - averageClosePrice, 2));
-                         double volatility = Math.Sqrt(sum / numDays);
-
-                         Console.WriteLine("Board ID: " + boardID + ", Volatility: " + volatility);
-                     }*/
                     //для стандартного отклонения
                     string result = "";
+                    standardDeviationTextBlock.ToolTip = "";
                     foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
@@ -328,6 +312,30 @@ namespace InvestmentAssistant.Pages
                         result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility,5)}\n";
                     }
                     standardDeviationTextBlock.ToolTip = result;
+
+                    //для среднего истинного диапазона
+                    string result1 = "";
+                    AverageTrueRangeTextBlock.ToolTip = "";
+                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    {
+                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                        double sumATR = 0;
+                        int numOfDays = group.Count();
+                        double previousClose = group.Select(x => x.Value.Close).FirstOrDefault(); 
+                        foreach (var data in group)
+                        {
+                            double highLowDifference = data.Value.High - data.Value.Low;
+                            double highPreviousCloseDifference = Math.Abs(data.Value.High - previousClose);
+                            double lowPreviousCloseDifference = Math.Abs(data.Value.Low - previousClose);
+                            double currentATR = Math.Max(highLowDifference, Math.Max(highPreviousCloseDifference, lowPreviousCloseDifference));
+                            sumATR += currentATR;
+                            previousClose = data.Value.Close;
+                        }
+                        double ATR = sumATR / numOfDays;
+                        result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
+                    }
+                    AverageTrueRangeTextBlock.ToolTip = result1;
+
                 }
                 else
                 {

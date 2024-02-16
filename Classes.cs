@@ -83,10 +83,7 @@ namespace InvestmentAssistant
         public double High { get; set; }
         /// <summary> Представляет цену закрытия  </summary>
         public double Close { get; set; }
-
-
         /// <summary> Представляет дату торгов  </summary>
         public DateTime TradeDate { get; set; }
-
     }
 }

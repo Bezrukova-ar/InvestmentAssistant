@@ -1,6 +1,7 @@
 ﻿using InvestmentAssistant.Pages;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -109,7 +110,7 @@ namespace InvestmentAssistant
         /// <summary>
         /// Метод для заполнения данными для расчёта волатильности
         /// </summary>
-        public async Task FillStockDataToCalculateVolatility(string symbol, Hashtable dataToCalculateVolatility)
+        public async Task FillStockDataToCalculateVolatility(string symbol, Dictionary <int, StockDataToCalculateVolatility>dataToCalculateVolatility)
         {
             var stockDataToCalculateVolatilityList = await financeAPI.GetDataToCalculateVolatility(symbol);
 

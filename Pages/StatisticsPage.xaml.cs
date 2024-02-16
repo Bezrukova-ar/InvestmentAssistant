@@ -22,8 +22,8 @@ namespace InvestmentAssistant.Pages
     public partial class StatisticsPage : Page
     {
 
-        /// <summary>  Статическая хэш-таблица, я устала писать диплом</summary>
-        public static Hashtable dataToCalculateVolatility = new Hashtable();
+        /// <summary>  словарь, я устала писать диплом</summary>
+        public static Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatility = new Dictionary<int, StockDataToCalculateVolatility>();
 
 
         /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
@@ -289,13 +289,45 @@ namespace InvestmentAssistant.Pages
                     // Расчет волатильности акции
                     await financeDataHandler.FillStockDataToCalculateVolatility(symbol, dataToCalculateVolatility);
                     // Отображение значения хеш-таблицы в MessageBox
-                    string message = "Хеш-таблица dataToCalculateVolatility:\n";
+                    /*string message = "Хеш-таблица dataToCalculateVolatility:\n";
                     foreach (var key in dataToCalculateVolatility.Keys)
                     {
-                        var candlestickData = (StockDataToCalculateVolatility)dataToCalculateVolatility[key];
+                        var candlestickData = dataToCalculateVolatility[key];
                         message += $"Key: {key}, Value: {candlestickData.BoardID},{candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}\n";
                     }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+                    /* foreach (var data in dataToCalculateVolatility)
+                     {
+                         int boardID = data.Key;
+                         List<StockDataToCalculateVolatility> stockData = data.Value;
+
+                         double averageClosePrice = stockData.Average(x => x.Close);
+                         int numDays = stockData.Count;
+
+                         double sum = stockData.Sum(x => Math.Pow(x.Close - averageClosePrice, 2));
+                         double volatility = Math.Sqrt(sum / numDays);
+
+                         Console.WriteLine("Board ID: " + boardID + ", Volatility: " + volatility);
+                     }*/
+                    //для стандартного отклонения
+                    string result = "";
+                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    {
+                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                        double sumSquaredDifferences = 0;
+                        double averageClose = group.Average(d => d.Value.Close);
+                        int numOfDays = group.Count();
+
+                        foreach (var data in group)
+                        {
+                            sumSquaredDifferences += Math.Pow(data.Value.Close - averageClose, 2);
+                        }
+
+                        double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
+
+                        result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility,5)}\n";
+                    }
+                    standardDeviationTextBlock.ToolTip = result;
                 }
                 else
                 {

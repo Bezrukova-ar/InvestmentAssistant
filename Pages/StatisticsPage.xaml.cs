@@ -355,7 +355,23 @@ namespace InvestmentAssistant.Pages
                     }
                     volatilityIndexTextBlock.ToolTip = result2;
 
-                    
+                    //среднее отклонение
+                    string result3 = "";
+                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    {
+                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                        double sumAbsoluteDifferences = 0;
+                        double averageClose = group.Average(d => d.Value.Close);
+                        int numOfDays = group.Count();
+                        foreach (var data in group)
+                        {
+                            sumAbsoluteDifferences += Math.Abs(data.Value.Close - averageClose);
+                        }
+                        double volatility = sumAbsoluteDifferences / numOfDays;
+                        result3 += $"Среднее отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                    }
+
+                    averageDeviationTextBlock.ToolTip = result3;
                 }
                 else
                 {

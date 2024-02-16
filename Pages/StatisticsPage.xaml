@@ -106,7 +106,7 @@
                     <TextBlock Grid.Row="1" x:Name="standardDeviationTextBlock" Text="Стандартное отклонение" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
                     <TextBlock Grid.Row="2" x:Name="averageTrueRangeTextBlock" Text="Средний истинный диапазон" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
                     <TextBlock Grid.Row="3" x:Name="volatilityIndexTextBlock" Text="Индекс волатильности" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
-                    <TextBlock Grid.Row="4"  Text="Среднее отклонение" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
+                    <TextBlock Grid.Row="4" x:Name="averageDeviationTextBlock" Text="Среднее отклонение" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS"/>
                 </Grid>
 
             </Border>

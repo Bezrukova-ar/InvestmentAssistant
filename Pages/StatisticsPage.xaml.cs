@@ -4,7 +4,6 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -26,23 +25,22 @@ namespace InvestmentAssistant.Pages
         SecurityService securityService = new SecurityService();
 
         /// <summary>  словарь, я устала писать диплом</summary>
-        public static Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatilityDictionary = new Dictionary<int, StockDataToCalculateVolatility>();
+        Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatilityDictionary = new Dictionary<int, StockDataToCalculateVolatility>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
-        public static Dictionary<int, CandlestickData> candlestickChartDistionary = new Dictionary<int, CandlestickData>();
+        Dictionary<int, CandlestickData> candlestickChartDistionary = new Dictionary<int, CandlestickData>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения графика объема сделок </summary>
-        public static Dictionary<int, SecurityTradingHistory> volumeTradeDistionary = new Dictionary<int, SecurityTradingHistory>();
+        Dictionary<int, SecurityTradingHistory> volumeTradeDistionary = new Dictionary<int, SecurityTradingHistory>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию о ценных бумагах </summary>
-        //public static Hashtable priceChangeDistionary = new Hashtable();
-        public static Dictionary<int, SharePriceTodayAndYesterday> priceChangeDistionary = new Dictionary<int, SharePriceTodayAndYesterday>();
+        Dictionary<int, SharePriceTodayAndYesterday> priceChangeDistionary = new Dictionary<int, SharePriceTodayAndYesterday>();
 
         /// <summary> Уникальный код ценной бумаги </summary>
-        public static string symbol;
+        string symbol;
         /// <summary> Название ценной бумаги </summary>
-        public static string nameSecurity;
+        string nameSecurity;
         /// <summary> Дата начала построения графика </summary>
-        public static DateTime startDate;
+        DateTime startDate;
         /// <summary> Дата окончания построения графика </summary>
-        public static DateTime endDate;
+        DateTime endDate;
 
 
         public StatisticsPage()
@@ -50,8 +48,6 @@ namespace InvestmentAssistant.Pages
             InitializeComponent();
             autoComboBox.IsEditable = true;
             Loaded += StatisticsPage_Loaded;
-
-
         }
 
         private async void StatisticsPage_Loaded(object sender, RoutedEventArgs e)
@@ -86,11 +82,10 @@ namespace InvestmentAssistant.Pages
         /// который всегда составляет не менее 7 дней </summary>
         private void startDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-           
-            if (startDatePicker.SelectedDate != null)
-            {
-                endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
-            }
+            if (startDatePicker.SelectedDate == null)            
+                return;
+            
+            endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
         }
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
@@ -98,10 +93,10 @@ namespace InvestmentAssistant.Pages
         private void endDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
            
-            if (endDatePicker.SelectedDate != null)
-            {
-                startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
-            }
+            if (endDatePicker.SelectedDate == null)
+                return;
+
+            startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
         }
         ///<summary> Обработчик события PreviewKeyDown выбирает первый элемент в поле со списком при нажатии клавиши Enter</summary>
         private void autoComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -202,8 +197,6 @@ namespace InvestmentAssistant.Pages
 
         private async void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
         {
-           // startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
-           // endDate = (DateTime)(endDatePicker.SelectedDate != null ? endDatePicker.SelectedDate : null);
             nameSecurity = autoComboBox.SelectedItem?.ToString();
 
             if (startDatePicker.SelectedDate != null && endDatePicker.SelectedDate != null)
@@ -377,9 +370,7 @@ namespace InvestmentAssistant.Pages
             else
             {
                 MessageBox.Show("Проверьте, ввели ли вы обе даты", "Внимание!");
-            }
-
-            
+            }          
         }
 
         private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)

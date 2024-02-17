@@ -20,19 +20,21 @@ namespace InvestmentAssistant.Pages
     /// </summary>
     public partial class StatisticsPage : Page
     {
+        /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
+        FinanceDataHandler financeDataHandler = new FinanceDataHandler();
+        /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
+        SecurityService securityService = new SecurityService();
 
         /// <summary>  словарь, я устала писать диплом</summary>
-        public static Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatility = new Dictionary<int, StockDataToCalculateVolatility>();
-
-
-        /// <summary> Экземпляр класса для управления операциями с финансовыми данными </summary>
-        FinanceDataHandler financeDataHandler = new FinanceDataHandler();
+        public static Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatilityDictionary = new Dictionary<int, StockDataToCalculateVolatility>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения свечного графика </summary>
-        public static Hashtable candlestickChartDataHash = new Hashtable();
+        public static Dictionary<int, CandlestickData> candlestickChartDistionary = new Dictionary<int, CandlestickData>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию для построения графика объема сделок </summary>
-        public static Hashtable volumeTradeDataHash = new Hashtable();
+        public static Dictionary<int, SecurityTradingHistory> volumeTradeDistionary = new Dictionary<int, SecurityTradingHistory>();
         /// <summary>  Статическая хэш-таблица, которая будет хранить информацию о ценных бумагах </summary>
-        public static Hashtable priceChangeHashTable = new Hashtable();
+        //public static Hashtable priceChangeDistionary = new Hashtable();
+        public static Dictionary<int, SharePriceTodayAndYesterday> priceChangeDistionary = new Dictionary<int, SharePriceTodayAndYesterday>();
+
         /// <summary> Уникальный код ценной бумаги </summary>
         public static string symbol;
         /// <summary> Название ценной бумаги </summary>
@@ -54,15 +56,15 @@ namespace InvestmentAssistant.Pages
 
         private async void StatisticsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (priceChangeHashTable.Count == 0)
+            if (priceChangeDistionary.Count == 0)
             {
 
-                await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
+                await financeDataHandler.FillThePriceChangeDictionary(priceChangeDistionary);
             }
             
 
             //Самые выросшие акции
-            var topRisingStocksByBoard = priceChangeHashTable.Values
+            var topRisingStocksByBoard = priceChangeDistionary.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
                  .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
@@ -71,7 +73,7 @@ namespace InvestmentAssistant.Pages
             TopRisingStocks.Text = string.Join(Environment.NewLine + Environment.NewLine, topRisingStocksByBoard);
 
             //самые упавшие акции
-            var topFallingStocks = priceChangeHashTable.Values
+            var topFallingStocks = priceChangeDistionary.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
                  .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(3))
@@ -210,7 +212,7 @@ namespace InvestmentAssistant.Pages
                 endDate = (DateTime)endDatePicker.SelectedDate;
                 if (symbol == null)
                 {
-                    symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
+                    symbol = securityService.GetIdSecurityByName(nameSecurity);
                     if (symbol == null)
                     {
                         return;
@@ -218,41 +220,35 @@ namespace InvestmentAssistant.Pages
                 }
                 else
                 {
-                    symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
+                    symbol = securityService.GetIdSecurityByName(nameSecurity);
 
 
-                    dataToCalculateVolatility.Clear();
+                    dataToCalculateVolatilityDictionary.Clear();
 
 
-                    candlestickChartDataHash.Clear();
-                    volumeTradeDataHash.Clear();
+                    candlestickChartDistionary.Clear();
+                    volumeTradeDistionary.Clear();
 
 
-                    await financeDataHandler.FillCandlestickChartDataHash(symbol, startDate, endDate, candlestickChartDataHash);
+                    await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDistionary);
                     // Отображение значения хеш-таблицы в MessageBox
-                    /*string message = "Хеш-таблица candlestickChartDataHash:\n";
-                    foreach (var key in candlestickChartDataHash.Keys)
+                    /*string message = "Хеш-таблица candlestickChartDistionary:\n";
+                    foreach (var key in candlestickChartDistionary.Keys)
                     {
-                        var candlestickData = (CandlestickData)candlestickChartDataHash[key];
+                        var candlestickData = (CandlestickData)candlestickChartDistionary[key];
                         message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
                     }
                     MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
 
                     var plotModel = new CartesianChart { };
-
-                    // Создание серии свечей
                     var candlestickSeries = new CandleSeries
                     {
                         Values = new ChartValues<OhlcPoint>()
                     };
 
-                    // Сортировка элементов хеш-таблицы по ключу
-                    var sortedEntries = candlestickChartDataHash.Cast<DictionaryEntry>().OrderBy(entry => (int)entry.Key);
-
-                    // Заполнение серии данными из отсортированной хеш-таблицы
-                    foreach (DictionaryEntry entry in sortedEntries)
+                    foreach (var entry in candlestickChartDistionary)
                     {
-                        var candlestickData = (CandlestickData)entry.Value;
+                        var candlestickData = entry.Value;
                         candlestickSeries.Values.Add(new OhlcPoint
                         {
                             High = (double)candlestickData.High,
@@ -262,23 +258,19 @@ namespace InvestmentAssistant.Pages
                         });
                     }
 
-                    // Добавление серии к модели
                     plotModel.Series.Add(candlestickSeries);
-
-                    // Привязка модели к CartesianChart
                     candlestickChart.Series = new SeriesCollection { candlestickSeries };
                     candlestickChart.LegendLocation = LegendLocation.None;
                     candlestickChart.Visibility = Visibility;
 
 
 
-
-                    await financeDataHandler.FillVolumeTradeDataHash(symbol, startDate, endDate, volumeTradeDataHash);
+                    await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDistionary);
                     volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
-                    var uniqueBoardIDs = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                    var uniqueBoardIDs = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
                     foreach (string boardID in uniqueBoardIDs)
                     {
-                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
                         var series = new LineSeries
                         {
                             Title = boardID,
@@ -287,7 +279,7 @@ namespace InvestmentAssistant.Pages
                         volumeChart.Series.Add(series);
                         valuesForBoardID.Clear();
                     }
-                    volumeChart.AxisX[0].Labels = volumeTradeDataHash.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
+                    volumeChart.AxisX[0].Labels = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
                     volumeChart.Visibility = Visibility;
 
 
@@ -295,12 +287,12 @@ namespace InvestmentAssistant.Pages
 
 
                     // Расчет волатильности акции
-                    await financeDataHandler.FillStockDataToCalculateVolatility(symbol, dataToCalculateVolatility);
+                    await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
 
 
                     //для стандартного отклонения
                     string result = "";
-                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
                         double sumSquaredDifferences = 0;
@@ -320,7 +312,7 @@ namespace InvestmentAssistant.Pages
 
                     //для среднего истинного диапазона
                     string result1 = "";
-                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
                         double sumATR = 0;
@@ -342,7 +334,7 @@ namespace InvestmentAssistant.Pages
 
                     //индекс волатильности
                     string result2 = "";
-                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
                         double sumPercentageDifference = 0;
@@ -363,7 +355,7 @@ namespace InvestmentAssistant.Pages
 
                     //среднее отклонение
                     string result3 = "";
-                    foreach (var group in dataToCalculateVolatility.GroupBy(d => d.Value.BoardID))
+                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
                     {
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
                         double sumAbsoluteDifferences = 0;
@@ -394,7 +386,7 @@ namespace InvestmentAssistant.Pages
         {
 
             // Выбираем три наиболее выросшие акции по каждому виду торгов
-            var topGainers = priceChangeHashTable.Values
+            var topGainers = priceChangeDistionary.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
                  .SelectMany(group => group.OrderByDescending(x => x.PercentageChangeInValue).Take(3))
@@ -403,36 +395,36 @@ namespace InvestmentAssistant.Pages
 
 
             // Преобразование данных topGainers в GainerData
-             var chartData = topGainers.Select(x => new GainerData
-             {
-                 SecurityName = x.SecurityName,
-                 PercentageChange = x.PercentageChangeInValue
-             }).ToList();
+            var chartData = topGainers.Select(x => new GainerData
+            {
+                SecurityName = x.SecurityName,
+                PercentageChange = x.PercentageChangeInValue
+            }).ToList();
 
             // Создание экземпляра SeriesCollection для хранения данных графика
             SeriesCollection series = new SeriesCollection();
+            stockChart.Series.Clear();
 
+            foreach (var data in chartData)
+            {
+                var columnSeries = new ColumnSeries
+                {
+                    Values = new ChartValues<double> { Math.Round(data.PercentageChange, 2) },
+                    DataLabels = true,
+                    LabelPoint = point => $"{point.Y}%", // отображение процентного изменения
+                    Title = data.SecurityName // установка названия акции для этого столбца
+                };
+                series.Add(columnSeries); // добавление столбца в коллекцию
+                stockChart.Series.Add(columnSeries);
 
-           foreach (var data in chartData)
-           {
-               var columnSeries = new ColumnSeries
-               {
-                   Values = new ChartValues<double> { Math.Round(data.PercentageChange, 2) },
-                   DataLabels = true,
-                   LabelPoint = point => $"{point.Y}%", // отображение процентного изменения
-                   Title = data.SecurityName // установка названия акции для этого столбца
-               };
-               series.Add(columnSeries); // добавление столбца в коллекцию
-              stockChart.Series.Add(columnSeries);
-            
-           }
+            }
 
         }
 
         private void barChartOfFallingStocks_Click(object sender, RoutedEventArgs e)
         {
             // Выбираем три наиболее упавшие акции по каждому виду торгов
-            var topGainers = priceChangeHashTable.Values
+            var topGainers = priceChangeDistionary.Values
                  .Cast<SharePriceTodayAndYesterday>()
                  .GroupBy(x => x.BoardID)
                  .SelectMany(group => group.OrderBy(x => x.PercentageChangeInValue).Take(3))
@@ -449,7 +441,7 @@ namespace InvestmentAssistant.Pages
 
             // Создание экземпляра SeriesCollection для хранения данных графика
             SeriesCollection series = new SeriesCollection();
-
+            stockChart.Series.Clear();
 
             foreach (var data in chartData)
             {

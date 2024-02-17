@@ -64,8 +64,7 @@ namespace InvestmentAssistant
 
         /// <summary> Навигация по приложению, открытие страницы для оптимизации имеющегося портфеля </summary>
         private void rdInvestmentPortfolioOptimization_Click(object sender, RoutedEventArgs e)
-        {
-            // PagesNavigation.Navigate(new Uri("Pages/InvestmentPortfolioOptimizationPage.xaml", UriKind.RelativeOrAbsolute));
+        {         
             PagesNavigation.Content = investmentPortfolioOptimizationPage;
         }
 

@@ -17,9 +17,7 @@ namespace InvestmentAssistant
         /// <summary> Экземпляр служит шлюзом для получения финансовых данных </summary>
         readonly FinanceAPI financeAPI = new FinanceAPI();
 
-        /// <summary>
-        /// Метод для заполнения данными о ценных бумагах хеш-таблицы
-        /// </summary>
+        /// <summary> Метод для заполнения данными о ценных бумагах словаря</summary>
         public async Task FillSecuritiesHashTable()
         {
             var listOfSecurities = await financeAPI.GetListOfSecurities();
@@ -32,34 +30,32 @@ namespace InvestmentAssistant
             }
         }
 
-        /// <summary>
-        /// Метод для заполнения данными для построения свечного графика хеш-таблицы
-        /// </summary>
-        public async Task FillCandlestickChartDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable candlestickChartDataHash)
+        /// <summary> Метод для заполнения данными для построения свечного графика словаря</summary>
+        public async Task FillCandlestickChartDictionary(string symbol, DateTime startDate, DateTime endDate, Dictionary<int, CandlestickData> candlestickChartDistionary)
         {
             var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
 
             int index = 1;
             foreach (var candlestickData in candlestickDataList)
             {
-                candlestickChartDataHash.Add(index++, candlestickData);
+                candlestickChartDistionary.Add(index++, candlestickData);
             }
         }
 
         /// <summary> Метод для заполнения данными для построения графика объема сделок </summary>
-        public async Task FillVolumeTradeDataHash(string symbol, DateTime startDate, DateTime endDate, Hashtable volumeTradeDataHash)
+        public async Task FillVolumeTradeDictionary(string symbol, DateTime startDate, DateTime endDate, Dictionary<int, SecurityTradingHistory> volumeTradeDistionary)
         {
             var securityTradingHistoryList = await financeAPI.GetTradingHistory(symbol, startDate, endDate);
 
             int index = 1;
             foreach (var securityTradingHistory in securityTradingHistoryList)
             {
-                volumeTradeDataHash.Add(index++, securityTradingHistory);
+                volumeTradeDistionary.Add(index++, securityTradingHistory);
             }
         }
 
         /// <summary>Метод для заполнения данными для вывода наиболее возрасших и упавших акций</summary>
-        public async Task FillThePriceChangeHashTable(Hashtable priceChangeHashTable)
+        public async Task FillThePriceChangeDictionary(Dictionary<int, SharePriceTodayAndYesterday> priceChangeDistionary)
         {
             var sharePriceTodayAndYesterdayList = await financeAPI.GetStockInfo();
 
@@ -71,7 +67,7 @@ namespace InvestmentAssistant
                     double percentageChange = (stockInfo.CurrentValue - stockInfo.PreviousValue) / stockInfo.PreviousValue * 100;
                     if (!double.IsInfinity(percentageChange))
                     {
-                        priceChangeHashTable.Add(index++, new SharePriceTodayAndYesterday
+                        priceChangeDistionary.Add(index++, new SharePriceTodayAndYesterday
                         {
                             SecurityId = stockInfo.SecurityId,
                             SecurityName = stockInfo.SecurityName,
@@ -85,17 +81,15 @@ namespace InvestmentAssistant
             }
         }
 
-        /// <summary>
-        /// Метод для заполнения данными для расчёта волатильности
-        /// </summary>
-        public async Task FillStockDataToCalculateVolatility(string symbol, Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatility)
+        /// <summary> Метод для заполнения данными для расчёта волатильности/// </summary>
+        public async Task FillStockDataToCalculateVolatilityDictionary(string symbol, Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatilityDictionary)
         {
             var stockDataToCalculateVolatilityList = await financeAPI.GetDataToCalculateVolatility(symbol);
 
             int index = 1;
             foreach (var stockDataToCalculateVolatility in stockDataToCalculateVolatilityList)
             {
-                dataToCalculateVolatility.Add(index++, stockDataToCalculateVolatility);
+                dataToCalculateVolatilityDictionary.Add(index++, stockDataToCalculateVolatility);
             }
         }
     }

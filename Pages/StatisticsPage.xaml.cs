@@ -199,178 +199,342 @@ namespace InvestmentAssistant.Pages
         {
             nameSecurity = autoComboBox.SelectedItem?.ToString();
 
-            if (startDatePicker.SelectedDate != null && endDatePicker.SelectedDate != null)
+            if (startDatePicker.SelectedDate == null || endDatePicker.SelectedDate == null)
             {
-                startDate = (DateTime)startDatePicker.SelectedDate;
-                endDate = (DateTime)endDatePicker.SelectedDate;
+                MessageBox.Show("Проверьте, ввели ли вы обе даты", "Внимание!");
+                return;
+            }
+            startDate = (DateTime)startDatePicker.SelectedDate;
+            endDate = (DateTime)endDatePicker.SelectedDate;
+            if (symbol == null)
+            {
+                symbol = securityService.GetIdSecurityByName(nameSecurity);
                 if (symbol == null)
                 {
-                    symbol = securityService.GetIdSecurityByName(nameSecurity);
-                    if (symbol == null)
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    symbol = securityService.GetIdSecurityByName(nameSecurity);
-
-
-                    dataToCalculateVolatilityDictionary.Clear();
-
-
-                    candlestickChartDistionary.Clear();
-                    volumeTradeDistionary.Clear();
-
-
-                    await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDistionary);
-                    // Отображение значения хеш-таблицы в MessageBox
-                    /*string message = "Хеш-таблица candlestickChartDistionary:\n";
-                    foreach (var key in candlestickChartDistionary.Keys)
-                    {
-                        var candlestickData = (CandlestickData)candlestickChartDistionary[key];
-                        message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
-                    }
-                    MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
-
-                    var plotModel = new CartesianChart { };
-                    var candlestickSeries = new CandleSeries
-                    {
-                        Values = new ChartValues<OhlcPoint>()
-                    };
-
-                    foreach (var entry in candlestickChartDistionary)
-                    {
-                        var candlestickData = entry.Value;
-                        candlestickSeries.Values.Add(new OhlcPoint
-                        {
-                            High = (double)candlestickData.High,
-                            Low = (double)candlestickData.Low,
-                            Open = (double)candlestickData.Open,
-                            Close = (double)candlestickData.Close
-                        });
-                    }
-
-                    plotModel.Series.Add(candlestickSeries);
-                    candlestickChart.Series = new SeriesCollection { candlestickSeries };
-                    candlestickChart.LegendLocation = LegendLocation.None;
-                    candlestickChart.Visibility = Visibility;
-
-
-
-                    await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDistionary);
-                    volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
-                    var uniqueBoardIDs = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
-                    foreach (string boardID in uniqueBoardIDs)
-                    {
-                        List<SecurityTradingHistory> valuesForBoardID = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
-                        var series = new LineSeries
-                        {
-                            Title = boardID,
-                            Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
-                        };
-                        volumeChart.Series.Add(series);
-                        valuesForBoardID.Clear();
-                    }
-                    volumeChart.AxisX[0].Labels = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
-                    volumeChart.Visibility = Visibility;
-
-
-
-
-
-                    // Расчет волатильности акции
-                    await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
-
-
-                    //для стандартного отклонения
-                    string result = "";
-                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                    {
-                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                        double sumSquaredDifferences = 0;
-                        double averageClose = group.Average(d => d.Value.Close);
-                        int numOfDays = group.Count();
-
-                        foreach (var data in group)
-                        {
-                            sumSquaredDifferences += Math.Pow(data.Value.Close - averageClose, 2);
-                        }
-
-                        double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
-
-                        result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                    }
-                    standardDeviationTextBlock.ToolTip = result;
-
-                    //для среднего истинного диапазона
-                    string result1 = "";
-                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                    {
-                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                        double sumATR = 0;
-                        int numOfDays = group.Count();
-                        double previousClose = group.Select(x => x.Value.Close).FirstOrDefault();
-                        foreach (var data in group)
-                        {
-                            double highLowDifference = data.Value.High - data.Value.Low;
-                            double highPreviousCloseDifference = Math.Abs(data.Value.High - previousClose);
-                            double lowPreviousCloseDifference = Math.Abs(data.Value.Low - previousClose);
-                            double currentATR = Math.Max(highLowDifference, Math.Max(highPreviousCloseDifference, lowPreviousCloseDifference));
-                            sumATR += currentATR;
-                            previousClose = data.Value.Close;
-                        }
-                        double ATR = sumATR / numOfDays;
-                        result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
-                    }
-                    averageTrueRangeTextBlock.ToolTip = result1;
-
-                    //индекс волатильности
-                    string result2 = "";
-                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                    {
-                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                        double sumPercentageDifference = 0;
-                        int numOfDays = group.Count();
-
-                        foreach (var data in group)
-                        {
-                            double high = data.Value.High;
-                            double low = data.Value.Low;
-
-                            sumPercentageDifference += (high - low) / high;
-                        }
-
-                        double volatility = (sumPercentageDifference / numOfDays) * 100;
-                        result2 += $"Индекс волатильности для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                    }
-                    volatilityIndexTextBlock.ToolTip = result2;
-
-                    //среднее отклонение
-                    string result3 = "";
-                    foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                    {
-                        string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                        double sumAbsoluteDifferences = 0;
-                        double averageClose = group.Average(d => d.Value.Close);
-                        int numOfDays = group.Count();
-                        foreach (var data in group)
-                        {
-                            sumAbsoluteDifferences += Math.Abs(data.Value.Close - averageClose);
-                        }
-                        double volatility = sumAbsoluteDifferences / numOfDays;
-                        result3 += $"Среднее отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                    }
-
-                    averageDeviationTextBlock.ToolTip = result3;
-
-
+                    return;
                 }
             }
             else
             {
-                MessageBox.Show("Проверьте, ввели ли вы обе даты", "Внимание!");
-            }          
+                symbol = securityService.GetIdSecurityByName(nameSecurity);
+
+
+                dataToCalculateVolatilityDictionary.Clear();
+
+
+                candlestickChartDistionary.Clear();
+                volumeTradeDistionary.Clear();
+
+
+                await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDistionary);
+                // Отображение значения хеш-таблицы в MessageBox
+                /*string message = "Хеш-таблица candlestickChartDistionary:\n";
+                foreach (var key in candlestickChartDistionary.Keys)
+                {
+                    var candlestickData = (CandlestickData)candlestickChartDistionary[key];
+                    message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
+                }
+                MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+
+                var plotModel = new CartesianChart { };
+                var candlestickSeries = new CandleSeries
+                {
+                    Values = new ChartValues<OhlcPoint>()
+                };
+
+                foreach (var entry in candlestickChartDistionary)
+                {
+                    var candlestickData = entry.Value;
+                    candlestickSeries.Values.Add(new OhlcPoint
+                    {
+                        High = (double)candlestickData.High,
+                        Low = (double)candlestickData.Low,
+                        Open = (double)candlestickData.Open,
+                        Close = (double)candlestickData.Close
+                    });
+                }
+
+                plotModel.Series.Add(candlestickSeries);
+                candlestickChart.Series = new SeriesCollection { candlestickSeries };
+                candlestickChart.LegendLocation = LegendLocation.None;
+                candlestickChart.Visibility = Visibility;
+
+                await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDistionary);
+                volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
+                var uniqueBoardIDs = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                foreach (string boardID in uniqueBoardIDs)
+                {
+                    List<SecurityTradingHistory> valuesForBoardID = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                    var series = new LineSeries
+                    {
+                        Title = boardID,
+                        Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
+                    };
+                    volumeChart.Series.Add(series);
+                    valuesForBoardID.Clear();
+                }
+                volumeChart.AxisX[0].Labels = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
+                volumeChart.Visibility = Visibility;
+
+
+                // Расчет волатильности акции
+                await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
+
+
+                //для стандартного отклонения
+                string result = "";
+                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                {
+                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                    double sumSquaredDifferences = 0;
+                    double averageClose = group.Average(d => d.Value.Close);
+                    int numOfDays = group.Count();
+
+                    foreach (var data in group)
+                    {
+                        sumSquaredDifferences += Math.Pow(data.Value.Close - averageClose, 2);
+                    }
+
+                    double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
+
+                    result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                }
+                standardDeviationTextBlock.ToolTip = result;
+
+                //для среднего истинного диапазона
+                string result1 = "";
+                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                {
+                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                    double sumATR = 0;
+                    int numOfDays = group.Count();
+                    double previousClose = group.Select(x => x.Value.Close).FirstOrDefault();
+                    foreach (var data in group)
+                    {
+                        double highLowDifference = data.Value.High - data.Value.Low;
+                        double highPreviousCloseDifference = Math.Abs(data.Value.High - previousClose);
+                        double lowPreviousCloseDifference = Math.Abs(data.Value.Low - previousClose);
+                        double currentATR = Math.Max(highLowDifference, Math.Max(highPreviousCloseDifference, lowPreviousCloseDifference));
+                        sumATR += currentATR;
+                        previousClose = data.Value.Close;
+                    }
+                    double ATR = sumATR / numOfDays;
+                    result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
+                }
+                averageTrueRangeTextBlock.ToolTip = result1;
+
+                //индекс волатильности
+                string result2 = "";
+                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                {
+                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                    double sumPercentageDifference = 0;
+                    int numOfDays = group.Count();
+
+                    foreach (var data in group)
+                    {
+                        double high = data.Value.High;
+                        double low = data.Value.Low;
+
+                        sumPercentageDifference += (high - low) / high;
+                    }
+
+                    double volatility = (sumPercentageDifference / numOfDays) * 100;
+                    result2 += $"Индекс волатильности для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                }
+                volatilityIndexTextBlock.ToolTip = result2;
+
+                //среднее отклонение
+                string result3 = "";
+                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                {
+                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                    double sumAbsoluteDifferences = 0;
+                    double averageClose = group.Average(d => d.Value.Close);
+                    int numOfDays = group.Count();
+                    foreach (var data in group)
+                    {
+                        sumAbsoluteDifferences += Math.Abs(data.Value.Close - averageClose);
+                    }
+                    double volatility = sumAbsoluteDifferences / numOfDays;
+                    result3 += $"Среднее отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                }
+
+                averageDeviationTextBlock.ToolTip = result3;
+
+                //if (startDatePicker.SelectedDate != null && endDatePicker.SelectedDate != null)
+                //{
+                //    startDate = (DateTime)startDatePicker.SelectedDate;
+                //    endDate = (DateTime)endDatePicker.SelectedDate;
+                //    if (symbol == null)
+                //    {
+                //        symbol = securityService.GetIdSecurityByName(nameSecurity);
+                //        if (symbol == null)
+                //        {
+                //            return;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        symbol = securityService.GetIdSecurityByName(nameSecurity);
+
+
+                //        dataToCalculateVolatilityDictionary.Clear();
+
+
+                //        candlestickChartDistionary.Clear();
+                //        volumeTradeDistionary.Clear();
+
+
+                //        await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDistionary);
+                //        // Отображение значения хеш-таблицы в MessageBox
+                //        /*string message = "Хеш-таблица candlestickChartDistionary:\n";
+                //        foreach (var key in candlestickChartDistionary.Keys)
+                //        {
+                //            var candlestickData = (CandlestickData)candlestickChartDistionary[key];
+                //            message += $"Key: {key}, Value: {candlestickData.Open}, {candlestickData.Low}, {candlestickData.High}, {candlestickData.Close}, {candlestickData.StartDate}\n"; //и так далее но уже с датой
+                //        }
+                //        MessageBox.Show(message, "Значение хеш-таблицы", MessageBoxButton.OK, MessageBoxImage.Information);*/
+
+                //        var plotModel = new CartesianChart { };
+                //        var candlestickSeries = new CandleSeries
+                //        {
+                //            Values = new ChartValues<OhlcPoint>()
+                //        };
+
+                //        foreach (var entry in candlestickChartDistionary)
+                //        {
+                //            var candlestickData = entry.Value;
+                //            candlestickSeries.Values.Add(new OhlcPoint
+                //            {
+                //                High = (double)candlestickData.High,
+                //                Low = (double)candlestickData.Low,
+                //                Open = (double)candlestickData.Open,
+                //                Close = (double)candlestickData.Close
+                //            });
+                //        }
+
+                //        plotModel.Series.Add(candlestickSeries);
+                //        candlestickChart.Series = new SeriesCollection { candlestickSeries };
+                //        candlestickChart.LegendLocation = LegendLocation.None;
+                //        candlestickChart.Visibility = Visibility;
+
+
+
+                //        await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDistionary);
+                //        volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
+                //        var uniqueBoardIDs = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+                //        foreach (string boardID in uniqueBoardIDs)
+                //        {
+                //            List<SecurityTradingHistory> valuesForBoardID = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                //            var series = new LineSeries
+                //            {
+                //                Title = boardID,
+                //                Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
+                //            };
+                //            volumeChart.Series.Add(series);
+                //            valuesForBoardID.Clear();
+                //        }
+                //        volumeChart.AxisX[0].Labels = volumeTradeDistionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
+                //        volumeChart.Visibility = Visibility;
+
+
+
+
+
+                //        // Расчет волатильности акции
+                //        await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
+
+
+                //        //для стандартного отклонения
+                //        string result = "";
+                //        foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                //        {
+                //            string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                //            double sumSquaredDifferences = 0;
+                //            double averageClose = group.Average(d => d.Value.Close);
+                //            int numOfDays = group.Count();
+
+                //            foreach (var data in group)
+                //            {
+                //                sumSquaredDifferences += Math.Pow(data.Value.Close - averageClose, 2);
+                //            }
+
+                //            double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
+
+                //            result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                //        }
+                //        standardDeviationTextBlock.ToolTip = result;
+
+                //        //для среднего истинного диапазона
+                //        string result1 = "";
+                //        foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                //        {
+                //            string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                //            double sumATR = 0;
+                //            int numOfDays = group.Count();
+                //            double previousClose = group.Select(x => x.Value.Close).FirstOrDefault();
+                //            foreach (var data in group)
+                //            {
+                //                double highLowDifference = data.Value.High - data.Value.Low;
+                //                double highPreviousCloseDifference = Math.Abs(data.Value.High - previousClose);
+                //                double lowPreviousCloseDifference = Math.Abs(data.Value.Low - previousClose);
+                //                double currentATR = Math.Max(highLowDifference, Math.Max(highPreviousCloseDifference, lowPreviousCloseDifference));
+                //                sumATR += currentATR;
+                //                previousClose = data.Value.Close;
+                //            }
+                //            double ATR = sumATR / numOfDays;
+                //            result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
+                //        }
+                //        averageTrueRangeTextBlock.ToolTip = result1;
+
+                //        //индекс волатильности
+                //        string result2 = "";
+                //        foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                //        {
+                //            string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                //            double sumPercentageDifference = 0;
+                //            int numOfDays = group.Count();
+
+                //            foreach (var data in group)
+                //            {
+                //                double high = data.Value.High;
+                //                double low = data.Value.Low;
+
+                //                sumPercentageDifference += (high - low) / high;
+                //            }
+
+                //            double volatility = (sumPercentageDifference / numOfDays) * 100;
+                //            result2 += $"Индекс волатильности для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                //        }
+                //        volatilityIndexTextBlock.ToolTip = result2;
+
+                //        //среднее отклонение
+                //        string result3 = "";
+                //        foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
+                //        {
+                //            string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
+                //            double sumAbsoluteDifferences = 0;
+                //            double averageClose = group.Average(d => d.Value.Close);
+                //            int numOfDays = group.Count();
+                //            foreach (var data in group)
+                //            {
+                //                sumAbsoluteDifferences += Math.Abs(data.Value.Close - averageClose);
+                //            }
+                //            double volatility = sumAbsoluteDifferences / numOfDays;
+                //            result3 += $"Среднее отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
+                //        }
+
+                //        averageDeviationTextBlock.ToolTip = result3;
+
+
+                //    }
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Проверьте, ввели ли вы обе даты", "Внимание!");
+                //}          
+            }
         }
 
         private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)

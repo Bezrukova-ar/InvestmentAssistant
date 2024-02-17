@@ -218,10 +218,7 @@ namespace InvestmentAssistant.Pages
             {
                 symbol = securityService.GetIdSecurityByName(nameSecurity);
 
-
                 dataToCalculateVolatilityDictionary.Clear();
-
-
                 candlestickChartDistionary.Clear();
                 volumeTradeDistionary.Clear();
 

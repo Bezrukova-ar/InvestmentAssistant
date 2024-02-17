@@ -28,26 +28,29 @@ namespace InvestmentAssistant
         /// <summary> Метод получения списка бумаг на московской бирже </summary>
         public async Task<List<NameOfSecurities>> GetListOfSecurities()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("engines/stock/markets/shares/securities.json");
+            HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities.json");
+
             response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
 
-            string jsonResponse = await response.Content.ReadAsStringAsync();
+            // Парсим JSON ответ
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["securities"]["columns"].ToObject<List<string>>();
+            var data = json["securities"]["data"].ToObject<List<List<object>>>();
 
-            // Обработка JSON и извлечение нужных полей
-            JObject json = JObject.Parse(jsonResponse);
-            var securities = json["securities"]["data"].Select(security =>
+            // Сопоставление данных с объектами CandlestickData
+            List<NameOfSecurities> nameOfSecuritiesList = new List<NameOfSecurities>();
+            foreach (var item in data)
             {
-                string secId = security[0]?.ToString() ?? "";
-                string secName = security[9]?.ToString() ?? "";
-
-                return new NameOfSecurities
+                var nameOfSecurities = new NameOfSecurities
                 {
-                    SecurityId = secId,
-                    SecurityName = secName
+                    SecurityId=Convert.ToString(item[columns.IndexOf("SECID")]),
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")])
                 };
-            }).ToList();
+                nameOfSecuritiesList.Add(nameOfSecurities);
+            }
 
-            return securities;
+            return nameOfSecuritiesList;
         }
 
         /// <summary> Метод получения данных для построения свечного графика </summary>

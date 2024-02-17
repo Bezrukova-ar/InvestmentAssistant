@@ -1,12 +1,11 @@
-﻿using System;
+﻿using InvestmentAssistant.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace InvestmentAssistant
 {
@@ -56,7 +55,7 @@ namespace InvestmentAssistant
 
             HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities/{symbol}/candles.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}");
             response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
+            string responseBody = await response.Content.ReadAsStringAsync();           
 
             // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
@@ -70,10 +69,10 @@ namespace InvestmentAssistant
                 var candlestickData = new CandlestickData
                 {
 
-                    Open = Convert.ToDecimal(item[columns.IndexOf("open")]),
-                    Low = Convert.ToDecimal(item[columns.IndexOf("low")]),
-                    High = Convert.ToDecimal(item[columns.IndexOf("high")]),
-                    Close = Convert.ToDecimal(item[columns.IndexOf("close")]),
+                    Open = Convert.ToDouble(item[columns.IndexOf("open")]),
+                    Low = Convert.ToDouble(item[columns.IndexOf("low")]),
+                    High = Convert.ToDouble(item[columns.IndexOf("high")]),
+                    Close = Convert.ToDouble(item[columns.IndexOf("close")]),
                     StartDate = DateTime.Parse(item[columns.IndexOf("begin")].ToString()),
                     EndDate = DateTime.Parse(item[columns.IndexOf("end")].ToString())
                 };

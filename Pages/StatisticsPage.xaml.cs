@@ -1,7 +1,7 @@
-﻿using LiveCharts;
-using LiveCharts.Configurations;
+﻿using InvestmentAssistant.Model;
+using InvestmentAssistant.Model.Chart;
+using LiveCharts;
 using LiveCharts.Defaults;
-using LiveCharts.Helpers;
 using LiveCharts.Wpf;
 using System;
 using System.Collections;
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace InvestmentAssistant.Pages
 {

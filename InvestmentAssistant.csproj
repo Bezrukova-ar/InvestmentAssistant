@@ -157,7 +157,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FinanceDataHandler.cs" />
-    <Compile Include="Classes.cs" />
+    <Compile Include="Model\CandlestickData.cs" />
+    <Compile Include="Model\Chart\GainerData.cs" />
+    <Compile Include="Model\NameOfSecurities.cs" />
+    <Compile Include="Model\SecurityTradingHistory.cs" />
+    <Compile Include="Model\SharePriceTodayAndYesterday.cs" />
+    <Compile Include="Model\StockDataToCalculateVolatility.cs" />
     <Compile Include="Pages\StatisticsPage.xaml.cs">
       <DependentUpon>StatisticsPage.xaml</DependentUpon>
     </Compile>

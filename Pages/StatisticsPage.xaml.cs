@@ -55,7 +55,12 @@ namespace InvestmentAssistant.Pages
 
         private async void StatisticsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
+            if (priceChangeHashTable.Count == 0)
+            {
+
+                await financeDataHandler.FillThePriceChangeHashTable(priceChangeHashTable);
+            }
+            
 
             //Самые выросшие акции
             var topRisingStocksByBoard = priceChangeHashTable.Values
@@ -196,24 +201,26 @@ namespace InvestmentAssistant.Pages
 
         private async void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
         {
-            startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
-            endDate = (DateTime)(endDatePicker.SelectedDate != null ? endDatePicker.SelectedDate : null);
+           // startDate = (DateTime)(startDatePicker.SelectedDate != null ? startDatePicker.SelectedDate : null);
+           // endDate = (DateTime)(endDatePicker.SelectedDate != null ? endDatePicker.SelectedDate : null);
             nameSecurity = autoComboBox.SelectedItem?.ToString();
-            
 
-            if (symbol == null)
+            if (startDatePicker.SelectedDate != null && endDatePicker.SelectedDate != null)
             {
-                symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
+                startDate = (DateTime)startDatePicker.SelectedDate;
+                endDate = (DateTime)endDatePicker.SelectedDate;
                 if (symbol == null)
                 {
-                    return; // прервать выполнение программы
+                    symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
+                    if (symbol == null)
+                    {
+                        return;
+                    }
                 }
-            }
-            else
-            {
-                symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
-                if (startDate != null && endDate != null)
+                else
                 {
+                    symbol = financeDataHandler.GetIdSecurityByName(nameSecurity);
+
 
                     dataToCalculateVolatility.Clear();
 
@@ -308,7 +315,7 @@ namespace InvestmentAssistant.Pages
 
                         double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
 
-                        result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility,5)}\n";
+                        result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
                     }
                     standardDeviationTextBlock.ToolTip = result;
 
@@ -319,7 +326,7 @@ namespace InvestmentAssistant.Pages
                         string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
                         double sumATR = 0;
                         int numOfDays = group.Count();
-                        double previousClose = group.Select(x => x.Value.Close).FirstOrDefault(); 
+                        double previousClose = group.Select(x => x.Value.Close).FirstOrDefault();
                         foreach (var data in group)
                         {
                             double highLowDifference = data.Value.High - data.Value.Low;
@@ -372,12 +379,16 @@ namespace InvestmentAssistant.Pages
                     }
 
                     averageDeviationTextBlock.ToolTip = result3;
-                }
-                else
-                {
-                    MessageBox.Show("Вы не ввели даты", "Внимание!");
+
+
                 }
             }
+            else
+            {
+                MessageBox.Show("Проверьте, ввели ли вы обе даты", "Внимание!");
+            }
+
+            
         }
 
         private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)

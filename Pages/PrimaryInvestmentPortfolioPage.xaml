@@ -39,8 +39,8 @@
                     Margin="5" CornerRadius="10"
                     BorderBrush="#FFEDE9FF"
                     BorderThickness="2"/>
-            <TextBlock Grid.Row="0" Text="Капитал" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,10,0,0" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Row="1" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
+            <TextBlock Grid.Row="0" Text="Капитал (в рублях)" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,10,0,0" VerticalAlignment="Bottom"/>
+            <TextBox x:Name="capitalTextBox" PreviewTextInput="capitalTextBox_PreviewTextInput" Grid.Row="1" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="2" Text="Цель инвестирования" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
             <ComboBox Grid.Row="3" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="4" Text="Инвестиционный горизонт" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>

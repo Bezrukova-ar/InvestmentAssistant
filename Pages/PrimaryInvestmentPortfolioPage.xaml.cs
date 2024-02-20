@@ -15,14 +15,24 @@ using System.Windows.Shapes;
 
 namespace InvestmentAssistant.Pages
 {
-    /// <summary>
-    /// Lógica de interacción para PrimaryInvestmentPortfolioPage.xaml
-    /// </summary>
     public partial class PrimaryInvestmentPortfolioPage : Page
     {
         public PrimaryInvestmentPortfolioPage()
         {
             InitializeComponent();
+        }
+
+        /// <summary> Ввод только тех значений, что являются числом </summary>
+        private void capitalTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            foreach (char c in e.Text)
+            {
+                if (!char.IsDigit(c))
+                {
+                    e.Handled = true;
+                    return;
+                }
+            }
         }
     }
 }

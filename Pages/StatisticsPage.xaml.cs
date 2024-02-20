@@ -120,6 +120,7 @@ namespace InvestmentAssistant.Pages
                 .Cast<NameOfSecurities>()
                 .Where(security =>
                     security.SecurityName.ToLower().Contains(newText.ToLower()))
+                .OrderBy(security => security.SecurityName.IndexOf(newText, StringComparison.OrdinalIgnoreCase))
                 .Select(security => security.SecurityName)
                 .ToList();
             autoComboBox.ItemsSource = filteredSecurities;

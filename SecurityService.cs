@@ -56,6 +56,7 @@ namespace InvestmentAssistant
                 List<SharePriceTodayAndYesterday> sortedList = group.OrderBy(x => x.PercentageChangeInValue).Take(3).ToList();
                 topLosers.Add(group.Key, sortedList);
             }
+
             return topLosers;
         }
     }

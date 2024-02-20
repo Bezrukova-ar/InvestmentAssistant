@@ -56,7 +56,6 @@ namespace InvestmentAssistant
         /// <summary> Метод получения данных для построения свечного графика </summary>
         public async Task<List<CandlestickData>> GetCandlestickData(string symbol, DateTime startDate, DateTime endDate)
         {
-
             HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities/{symbol}/candles.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}");
 
             response.EnsureSuccessStatusCode();

@@ -58,13 +58,11 @@ namespace InvestmentAssistant.Pages
         {
             if (priceChangeDictionary.Count == 0)
             {
-
                 await financeDataHandler.FillThePriceChangeDictionary(priceChangeDictionary);
             }
 
             //Наиболее возросшие акции
             risingStocksDictionary = securityService.GetTopGainers(priceChangeDictionary);
-
             StringBuilder risingStocksStringBuilder = new StringBuilder();
             foreach (var pair in risingStocksDictionary)
             {
@@ -75,12 +73,10 @@ namespace InvestmentAssistant.Pages
                 }
                 risingStocksStringBuilder.AppendLine();
             }
-
             TopRisingStocks.Text = risingStocksStringBuilder.ToString();
 
             //Наиболее упавшие акции
             fallingStocksDictionary = securityService.GetWorseLosers(priceChangeDictionary);
-
             StringBuilder fallingStringBuilder = new StringBuilder();
             foreach (var pair in fallingStocksDictionary)
             {
@@ -91,9 +87,9 @@ namespace InvestmentAssistant.Pages
                 }
                 fallingStringBuilder.AppendLine();
             }
-
             TopFallingStocks.Text = fallingStringBuilder.ToString();
         }
+
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
         /// который всегда составляет не менее 7 дней </summary>
@@ -104,6 +100,7 @@ namespace InvestmentAssistant.Pages
             
             endDatePicker.DisplayDateStart = startDatePicker.SelectedDate.Value.AddDays(7);
         }
+
         /// <summary> Обработчик события SelectedDateChanged, обеспечивает согласование выбранных дат
         /// в startDatePicker и endDatePicker, позволяя пользователю выбирать период времени, 
         /// который всегда составляет не менее 7 дней </summary>
@@ -115,6 +112,7 @@ namespace InvestmentAssistant.Pages
 
             startDatePicker.DisplayDateEnd = endDatePicker.SelectedDate.Value.AddDays(-7);
         }
+
         ///<summary> Обработчик события PreviewKeyDown выбирает первый элемент в поле со списком при нажатии клавиши Enter</summary>
         private void autoComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -368,6 +366,7 @@ namespace InvestmentAssistant.Pages
             }
         }
 
+        ///<summary> Построение графика наиболее выросших акций </summary>
         private void barChartOfRisingStocks_Click(object sender, RoutedEventArgs e)
         {
             var chartData = risingStocksDictionary.SelectMany(x => x.Value.Select(y => new GainerData
@@ -394,6 +393,7 @@ namespace InvestmentAssistant.Pages
             }
         }
 
+        ///<summary> Построение графика наиболее упавших акций </summary>
         private void barChartOfFallingStocks_Click(object sender, RoutedEventArgs e)
         {
             var chartData = fallingStocksDictionary.SelectMany(x => x.Value.Select(y => new GainerData
@@ -419,5 +419,5 @@ namespace InvestmentAssistant.Pages
                 stockChart.Series.Add(columnSeries);
             }
         }
-    }   
+    }
 }

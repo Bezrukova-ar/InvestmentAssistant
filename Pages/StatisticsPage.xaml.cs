@@ -222,6 +222,7 @@ namespace InvestmentAssistant.Pages
         private async void downloadStockPriceChart_Click(object sender, RoutedEventArgs e)
         {
             nameSecurity = autoComboBox.SelectedItem?.ToString();
+            symbol = securityService.GetIdSecurityByName(nameSecurity);
 
             if (startDatePicker.SelectedDate == null || endDatePicker.SelectedDate == null)
             {
@@ -234,87 +235,80 @@ namespace InvestmentAssistant.Pages
 
             if (symbol == null)
             {
-                symbol = securityService.GetIdSecurityByName(nameSecurity);
-                if (symbol == null)
-                {
-                    return;
-                }
+                return;
             }
-            else
+            symbol = securityService.GetIdSecurityByName(nameSecurity);
+
+            dataToCalculateVolatilityDictionary.Clear();
+            candlestickChartDictionary.Clear();
+            volumeTradeDictionary.Clear();
+
+            await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDictionary);
+
+            var plotModel = new CartesianChart { };
+            var candlestickSeries = new CandleSeries
             {
-                symbol = securityService.GetIdSecurityByName(nameSecurity);
+                Values = new ChartValues<OhlcPoint>()
+            };
 
-                dataToCalculateVolatilityDictionary.Clear();
-                candlestickChartDictionary.Clear();
-                volumeTradeDictionary.Clear();
-
-                await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDictionary);              
-
-                var plotModel = new CartesianChart { };
-                var candlestickSeries = new CandleSeries
+            foreach (var entry in candlestickChartDictionary)
+            {
+                var candlestickData = entry.Value;
+                candlestickSeries.Values.Add(new OhlcPoint
                 {
-                    Values = new ChartValues<OhlcPoint>()
-                };
-
-                foreach (var entry in candlestickChartDictionary)
-                {
-                    var candlestickData = entry.Value;
-                    candlestickSeries.Values.Add(new OhlcPoint
-                    {
-                        High = (double)candlestickData.High,
-                        Low = (double)candlestickData.Low,
-                        Open = (double)candlestickData.Open,
-                        Close = (double)candlestickData.Close
-                    });
-                }
-
-                plotModel.Series.Add(candlestickSeries);
-                candlestickChart.Series = new SeriesCollection { candlestickSeries };
-                candlestickChart.LegendLocation = LegendLocation.None;
-                candlestickChart.Visibility = Visibility;
-
-                await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDictionary);
-
-                volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
-                var uniqueBoardIDs = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
-
-                foreach (string boardID in uniqueBoardIDs)
-                {
-                    List<SecurityTradingHistory> valuesForBoardID = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
-                    var series = new LineSeries
-                    {
-                        Title = boardID,
-                        Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
-                    };
-                    volumeChart.Series.Add(series);
-                    valuesForBoardID.Clear();
-                }
-                volumeChart.AxisX[0].Labels = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
-                volumeChart.Visibility = Visibility;
-
-                // Расчет волатильности акции
-                await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
-
-                //Стандартное отклонение
-                resultStandardDeviation= "";
-                resultStandardDeviation = securityService.CalculationOfStandardDeviation(dataToCalculateVolatilityDictionary);
-                standardDeviationTextBlock.ToolTip = resultStandardDeviation;
-
-                //Средний истинный диапазон
-                resultAverageTrueRange = "";
-                resultAverageTrueRange = securityService.AverageTrueRangeCalculation(dataToCalculateVolatilityDictionary);
-                averageTrueRangeTextBlock.ToolTip = resultAverageTrueRange;
-
-                //Индекс волатильности
-                resultVolatilityIndex = "";
-                resultVolatilityIndex = securityService.VolatilityIndexCalculation(dataToCalculateVolatilityDictionary);
-                volatilityIndexTextBlock.ToolTip = resultVolatilityIndex;
-
-                //Среднее отклонение
-                resultAverageDeviation = "";
-                resultAverageDeviation=securityService.CalculationOfAverageDeviation(dataToCalculateVolatilityDictionary);
-                averageDeviationTextBlock.ToolTip = resultAverageDeviation;
+                    High = (double)candlestickData.High,
+                    Low = (double)candlestickData.Low,
+                    Open = (double)candlestickData.Open,
+                    Close = (double)candlestickData.Close
+                });
             }
+
+            plotModel.Series.Add(candlestickSeries);
+            candlestickChart.Series = new SeriesCollection { candlestickSeries };
+            candlestickChart.LegendLocation = LegendLocation.None;
+            candlestickChart.Visibility = Visibility;
+
+            await financeDataHandler.FillVolumeTradeDictionary(symbol, startDate, endDate, volumeTradeDictionary);
+
+            volumeChart.Series.Clear(); // очищаем графики перед добавлением новых
+            var uniqueBoardIDs = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Select(x => x.BoardID).Distinct();
+
+            foreach (string boardID in uniqueBoardIDs)
+            {
+                List<SecurityTradingHistory> valuesForBoardID = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Where(x => x.BoardID == boardID).OrderBy(x => x.TradeDate).ToList();
+                var series = new LineSeries
+                {
+                    Title = boardID,
+                    Values = new ChartValues<double>(valuesForBoardID.Select(data => data.Volume)),
+                };
+                volumeChart.Series.Add(series);
+                valuesForBoardID.Clear();
+            }
+            volumeChart.AxisX[0].Labels = volumeTradeDictionary.Values.Cast<SecurityTradingHistory>().Select(data => data.TradeDate.ToShortDateString()).Distinct().ToArray();
+            volumeChart.Visibility = Visibility;
+
+            // Расчет волатильности акции
+            await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
+
+            //Стандартное отклонение
+            resultStandardDeviation = "";
+            resultStandardDeviation = securityService.CalculationOfStandardDeviation(dataToCalculateVolatilityDictionary);
+            standardDeviationTextBlock.ToolTip = resultStandardDeviation;
+
+            //Средний истинный диапазон
+            resultAverageTrueRange = "";
+            resultAverageTrueRange = securityService.AverageTrueRangeCalculation(dataToCalculateVolatilityDictionary);
+            averageTrueRangeTextBlock.ToolTip = resultAverageTrueRange;
+
+            //Индекс волатильности
+            resultVolatilityIndex = "";
+            resultVolatilityIndex = securityService.VolatilityIndexCalculation(dataToCalculateVolatilityDictionary);
+            volatilityIndexTextBlock.ToolTip = resultVolatilityIndex;
+
+            //Среднее отклонение
+            resultAverageDeviation = "";
+            resultAverageDeviation = securityService.CalculationOfAverageDeviation(dataToCalculateVolatilityDictionary);
+            averageDeviationTextBlock.ToolTip = resultAverageDeviation;
         }
 
         ///<summary> Построение графика наиболее выросших акций </summary>

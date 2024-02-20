@@ -92,7 +92,7 @@
                      Margin="5" CornerRadius="10"
                      BorderBrush="#FFE1F1FD"
                      BorderThickness="2">
-                <Grid>
+                <Grid Margin="2,0,0,0">
                    
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"/>

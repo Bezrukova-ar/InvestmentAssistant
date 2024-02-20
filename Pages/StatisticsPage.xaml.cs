@@ -237,7 +237,7 @@ namespace InvestmentAssistant.Pages
             {
                 return;
             }
-            symbol = securityService.GetIdSecurityByName(nameSecurity);
+           // symbol = securityService.GetIdSecurityByName(nameSecurity);
 
             dataToCalculateVolatilityDictionary.Clear();
             candlestickChartDictionary.Clear();

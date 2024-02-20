@@ -46,6 +46,14 @@ namespace InvestmentAssistant.Pages
         DateTime startDate;
         /// <summary> Дата окончания построения графика </summary>
         DateTime endDate;
+        /// <summary> Результат расчета стандартного отклонения </summary>
+        string resultStandardDeviation;
+        /// <summary> Результат расчета среднего истинного значения </summary>
+        string resultAverageTrueRange;
+        /// <summary> Результат расчета индекса волатильности</summary>
+        string resultVolatilityIndex;
+        /// <summary> Результат расчета среднего отклонения</summary>
+        string resultAverageDeviation;
 
         public StatisticsPage()
         {
@@ -287,82 +295,25 @@ namespace InvestmentAssistant.Pages
                 // Расчет волатильности акции
                 await financeDataHandler.FillStockDataToCalculateVolatilityDictionary(symbol, dataToCalculateVolatilityDictionary);
 
-                //для стандартного отклонения
-                string result = "";
-                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                {
-                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                    double sumSquaredDifferences = 0;
-                    double averageClose = group.Average(d => d.Value.Close);
-                    int numOfDays = group.Count();
+                //Стандартное отклонение
+                resultStandardDeviation= "";
+                resultStandardDeviation = securityService.CalculationOfStandardDeviation(dataToCalculateVolatilityDictionary);
+                standardDeviationTextBlock.ToolTip = resultStandardDeviation;
 
-                    foreach (var data in group)
-                    {
-                        sumSquaredDifferences += Math.Pow(data.Value.Close - averageClose, 2);
-                    }
-                    double volatility = Math.Sqrt(sumSquaredDifferences / numOfDays);
-                    result += $"Стандартное отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                }
-                standardDeviationTextBlock.ToolTip = result;
+                //Средний истинный диапазон
+                resultAverageTrueRange = "";
+                resultAverageTrueRange = securityService.AverageTrueRangeCalculation(dataToCalculateVolatilityDictionary);
+                averageTrueRangeTextBlock.ToolTip = resultAverageTrueRange;
 
-                //для среднего истинного диапазона
-                string result1 = "";
-                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                {
-                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                    double sumATR = 0;
-                    int numOfDays = group.Count();
-                    double previousClose = group.Select(x => x.Value.Close).FirstOrDefault();
-                    foreach (var data in group)
-                    {
-                        double highLowDifference = data.Value.High - data.Value.Low;
-                        double highPreviousCloseDifference = Math.Abs(data.Value.High - previousClose);
-                        double lowPreviousCloseDifference = Math.Abs(data.Value.Low - previousClose);
-                        double currentATR = Math.Max(highLowDifference, Math.Max(highPreviousCloseDifference, lowPreviousCloseDifference));
-                        sumATR += currentATR;
-                        previousClose = data.Value.Close;
-                    }
-                    double ATR = sumATR / numOfDays;
-                    result1 += $"Средний истинный диапазон для режима торгов {boardID}: { Math.Round(ATR, 5)}\n";
-                }
-                averageTrueRangeTextBlock.ToolTip = result1;
+                //Индекс волатильности
+                resultVolatilityIndex = "";
+                resultVolatilityIndex = securityService.VolatilityIndexCalculation(dataToCalculateVolatilityDictionary);
+                volatilityIndexTextBlock.ToolTip = resultVolatilityIndex;
 
-                //индекс волатильности
-                string result2 = "";
-                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                {
-                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                    double sumPercentageDifference = 0;
-                    int numOfDays = group.Count();
-
-                    foreach (var data in group)
-                    {
-                        double high = data.Value.High;
-                        double low = data.Value.Low;
-
-                        sumPercentageDifference += (high - low) / high;
-                    }
-                    double volatility = (sumPercentageDifference / numOfDays) * 100;
-                    result2 += $"Индекс волатильности для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                }
-                volatilityIndexTextBlock.ToolTip = result2;
-
-                //среднее отклонение
-                string result3 = "";
-                foreach (var group in dataToCalculateVolatilityDictionary.GroupBy(d => d.Value.BoardID))
-                {
-                    string boardID = group.Select(x => x.Value.BoardID).FirstOrDefault();
-                    double sumAbsoluteDifferences = 0;
-                    double averageClose = group.Average(d => d.Value.Close);
-                    int numOfDays = group.Count();
-                    foreach (var data in group)
-                    {
-                        sumAbsoluteDifferences += Math.Abs(data.Value.Close - averageClose);
-                    }
-                    double volatility = sumAbsoluteDifferences / numOfDays;
-                    result3 += $"Среднее отклонение для режима торгов {boardID}: { Math.Round(volatility, 5)}\n";
-                }
-                averageDeviationTextBlock.ToolTip = result3;             
+                //Среднее отклонение
+                resultAverageDeviation = "";
+                resultAverageDeviation=securityService.CalculationOfAverageDeviation(dataToCalculateVolatilityDictionary);
+                averageDeviationTextBlock.ToolTip = resultAverageDeviation;
             }
         }
 

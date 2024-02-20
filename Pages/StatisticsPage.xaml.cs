@@ -54,6 +54,8 @@ namespace InvestmentAssistant.Pages
         string resultVolatilityIndex;
         /// <summary> Результат расчета среднего отклонения</summary>
         string resultAverageDeviation;
+        /// <summary> Проверка выполнения метода</summary>
+        private bool isExecuting = false;
 
         public StatisticsPage()
         {
@@ -236,12 +238,7 @@ namespace InvestmentAssistant.Pages
             if (symbol == null)
             {
                 return;
-            }
-           // symbol = securityService.GetIdSecurityByName(nameSecurity);
-
-            dataToCalculateVolatilityDictionary.Clear();
-            candlestickChartDictionary.Clear();
-            volumeTradeDictionary.Clear();
+            }           
 
             await financeDataHandler.FillCandlestickChartDictionary(symbol, startDate, endDate, candlestickChartDictionary);
 

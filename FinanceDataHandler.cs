@@ -34,7 +34,7 @@ namespace InvestmentAssistant
         public async Task FillCandlestickChartDictionary(string symbol, DateTime startDate, DateTime endDate, Dictionary<int, CandlestickData> candlestickChartDistionary)
         {
             var candlestickDataList = await financeAPI.GetCandlestickData(symbol, startDate, endDate);
-
+            candlestickChartDistionary.Clear();
             int index = 1;
             foreach (var candlestickData in candlestickDataList)
             {
@@ -43,14 +43,14 @@ namespace InvestmentAssistant
         }
 
         /// <summary> Метод для заполнения данными для построения графика объема сделок </summary>
-        public async Task FillVolumeTradeDictionary(string symbol, DateTime startDate, DateTime endDate, Dictionary<int, SecurityTradingHistory> volumeTradeDistionary)
+        public async Task FillVolumeTradeDictionary(string symbol, DateTime startDate, DateTime endDate, Dictionary<int, SecurityTradingHistory> volumeTradeDictionary)
         {
             var securityTradingHistoryList = await financeAPI.GetTradingHistory(symbol, startDate, endDate);
-
+            volumeTradeDictionary.Clear();
             int index = 1;
             foreach (var securityTradingHistory in securityTradingHistoryList)
             {
-                volumeTradeDistionary.Add(index++, securityTradingHistory);
+                volumeTradeDictionary.Add(index++, securityTradingHistory);
             }
         }
 
@@ -85,7 +85,7 @@ namespace InvestmentAssistant
         public async Task FillStockDataToCalculateVolatilityDictionary(string symbol, Dictionary<int, StockDataToCalculateVolatility> dataToCalculateVolatilityDictionary)
         {
             var stockDataToCalculateVolatilityList = await financeAPI.GetDataToCalculateVolatility(symbol);
-
+            dataToCalculateVolatilityDictionary.Clear();
             int index = 1;
             foreach (var stockDataToCalculateVolatility in stockDataToCalculateVolatilityList)
             {

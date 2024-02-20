@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InvestmentAssistant.Model
+﻿namespace InvestmentAssistant.Model
 {    /// <summary> Представляет структуру данных, используемую для сопоставления стратегии и ее условий </summary>
     class InvestmentStrategiesAndTheirConditions
     {

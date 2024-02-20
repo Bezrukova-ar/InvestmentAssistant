@@ -17,9 +17,16 @@ namespace InvestmentAssistant.Pages
 {
     public partial class PrimaryInvestmentPortfolioPage : Page
     {
+        /// <summary> Экземпляр класса для заполнения данными combobox</summary>
+        StrategyAndConditions strategyAndConditions = new StrategyAndConditions();
+
         public PrimaryInvestmentPortfolioPage()
         {
             InitializeComponent();
+            investmentGoalComboBox.ItemsSource = strategyAndConditions.InvestmentGoalList;
+            investmentHorizonComboBox.ItemsSource = strategyAndConditions.InvestmentHorizonList;
+            riskAccountingComboBox.ItemsSource = strategyAndConditions.RiskAccountingList;
+            ExpectedReturnComboBox.ItemsSource = strategyAndConditions.ExpectedReturnList;
         }
 
         /// <summary> Ввод только тех значений, что являются числом </summary>

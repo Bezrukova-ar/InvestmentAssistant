@@ -115,6 +115,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\InvestmentStrategiesAndTheirConditions.cs" />
     <Compile Include="SecurityService.cs" />
+    <Compile Include="StrategyAndConditions.cs" />
     <Page Include="Assets\Icons\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

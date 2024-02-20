@@ -42,13 +42,13 @@
             <TextBlock Grid.Row="0" Text="Капитал (в рублях)" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,10,0,0" VerticalAlignment="Bottom"/>
             <TextBox x:Name="capitalTextBox" PreviewTextInput="capitalTextBox_PreviewTextInput" Grid.Row="1" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="2" Text="Цель инвестирования" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
-            <ComboBox Grid.Row="3" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
+            <ComboBox x:Name="investmentGoalComboBox" Grid.Row="3" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="4" Text="Инвестиционный горизонт" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
-            <ComboBox Grid.Row="5" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
+            <ComboBox x:Name="investmentHorizonComboBox" Grid.Row="5" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="6" Text="Учет рисков" FontWeight="Heavy" FontSize="16" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
-            <ComboBox Grid.Row="7" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
+            <ComboBox x:Name="riskAccountingComboBox" Grid.Row="7" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="8" Text="Ожидаемая доходность" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
-            <ComboBox Grid.Row="9" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
+            <ComboBox x:Name="ExpectedReturnComboBox" Grid.Row="9" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="10" Text="Предложенная стретегия:" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
             <TextBlock Grid.Row="11" Text="Арина потом убери отсюда текст" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Top"/>
             <Button Grid.Row="12" Grid.RowSpan="2" Content="Расчёт" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Margin="15"/>

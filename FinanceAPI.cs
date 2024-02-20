@@ -1,53 +1,56 @@
-﻿using System;
+﻿using InvestmentAssistant.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace InvestmentAssistant
 {
 
-    /// <summary>
-    /// Класс FinanceAPI инкапсулирует функциональные возможности
-    /// взаимодействия с API Московской биржи(MOEX) 
-    /// для получения информации о ценных бумагах
-    /// </summary>
+    /// <summary> Класс FinanceAPI инкапсулирует функциональные возможности взаимодействия с API Московской биржи(MOEX) 
+    /// для получения информации о ценных бумагах </summary>
     public class FinanceAPI
     {
+        private const string FinanceApiUrl = "https://iss.moex.com/iss/";
         private readonly HttpClient _httpClient;
 
-        public FinanceAPI() 
+        public FinanceAPI()
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://iss.moex.com/iss/");
-
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(FinanceApiUrl)
+            };
         }
 
         /// <summary> Метод получения списка бумаг на московской бирже </summary>
         public async Task<List<NameOfSecurities>> GetListOfSecurities()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("engines/stock/markets/shares/securities.json");
+            HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities.json");
+
             response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
 
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            // Обработка JSON и извлечение нужных полей
-            JObject json = JObject.Parse(jsonResponse);
-            var securities = json["securities"]["data"].Select(security =>
+            // Парсим JSON ответ
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["securities"]["columns"].ToObject<List<string>>();
+            var data = json["securities"]["data"].ToObject<List<List<object>>>();
+
+            // Сопоставление данных с объектами CandlestickData
+            List<NameOfSecurities> nameOfSecuritiesList = new List<NameOfSecurities>();
+            foreach (var item in data)
             {
-                string secId = security[0]?.ToString() ?? "";
-                string secName = security[9]?.ToString() ?? "";            
-
-                return new NameOfSecurities
+                var nameOfSecurities = new NameOfSecurities
                 {
-                    SecurityId = secId,
-                    SecurityName = secName
+                    SecurityId=Convert.ToString(item[columns.IndexOf("SECID")]),
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")])
                 };
-            }).ToList();
-            return securities;
+                nameOfSecuritiesList.Add(nameOfSecurities);
+            }
+
+            return nameOfSecuritiesList;
         }
 
         /// <summary> Метод получения данных для построения свечного графика </summary>
@@ -55,6 +58,7 @@ namespace InvestmentAssistant
         {
 
             HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities/{symbol}/candles.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}");
+
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -70,25 +74,29 @@ namespace InvestmentAssistant
                 var candlestickData = new CandlestickData
                 {
 
-                    Open = Convert.ToDecimal(item[columns.IndexOf("open")]),
-                    Low = Convert.ToDecimal(item[columns.IndexOf("low")]),
-                    High = Convert.ToDecimal(item[columns.IndexOf("high")]),
-                    Close = Convert.ToDecimal(item[columns.IndexOf("close")]),
+                    Open = Convert.ToDouble(item[columns.IndexOf("open")]),
+                    Low = Convert.ToDouble(item[columns.IndexOf("low")]),
+                    High = Convert.ToDouble(item[columns.IndexOf("high")]),
+                    Close = Convert.ToDouble(item[columns.IndexOf("close")]),
                     StartDate = DateTime.Parse(item[columns.IndexOf("begin")].ToString()),
                     EndDate = DateTime.Parse(item[columns.IndexOf("end")].ToString())
                 };
                 candlestickDataList.Add(candlestickData);
             }
+
             return candlestickDataList;
         }
 
+        /// <summary> Метод получения данных истории торгов для построения диаграммы объемов торгов </summary>
         public async Task<List<SecurityTradingHistory>> GetTradingHistory(string symbol, DateTime startDate, DateTime endDate)
         {
             string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}/trades.json?from={startDate:yyyy-MM-dd}&till={endDate:yyyy-MM-dd}";
             HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
+            // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
             var columns = json["history"]["columns"].ToObject<List<string>>();
             var data = json["history"]["data"].ToObject<List<List<object>>>();
@@ -100,23 +108,26 @@ namespace InvestmentAssistant
                 var securityTradingHistory = new SecurityTradingHistory
                 {
                     BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
-                    TradeDate=DateTime.Parse(item[columns.IndexOf("TRADEDATE")].ToString()),
-                    NumTrade=Convert.ToInt32(item[columns.IndexOf("NUMTRADES")]),
+                    TradeDate = DateTime.Parse(item[columns.IndexOf("TRADEDATE")].ToString()),
+                    NumTrade = Convert.ToInt32(item[columns.IndexOf("NUMTRADES")]),
                     Volume = Convert.ToDouble(item[columns.IndexOf("VOLUME")])
                 };
-                 securityTradingHistoryList.Add(securityTradingHistory);
+                securityTradingHistoryList.Add(securityTradingHistory);
             }
 
             return securityTradingHistoryList;
         }
 
+        /// <summary> Метод получения данных для расчета изменения цены акции в процентах</summary>
         public async Task<List<SharePriceTodayAndYesterday>> GetStockInfo()
         {
             string requestUri = $"engines/stock/markets/shares/securities.json?";
             HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
+            // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
             var columns = json["securities"]["columns"].ToObject<List<string>>();
             var data = json["securities"]["data"].ToObject<List<List<object>>>();
@@ -129,7 +140,7 @@ namespace InvestmentAssistant
                 {
                     SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
                     BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
-                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")].ToString()), // заменить на SECNAME
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")].ToString()),
                     CurrentValue = Convert.ToDouble(item[columns.IndexOf("PREVPRICE")]),
                     PreviousValue = Convert.ToDouble(item[columns.IndexOf("PREVWAPRICE")])
                 };
@@ -137,22 +148,21 @@ namespace InvestmentAssistant
             }
 
             return sharePriceTodayAndYesterdayList;
-
         }
 
+        /// <summary> Метод получения данных для расчета волатильности</summary>
         public async Task<List<StockDataToCalculateVolatility>> GetDataToCalculateVolatility(string symbol)
         {
             string fromDate = DateTime.Now.AddYears(-1).ToString("yyyy-MM-dd");
             string toDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}.json?from={fromDate}&till={toDate}";
-
-
-            //string requestUri = $"history/engines/stock/markets/shares/securities/{symbol}.json?start=0&limit=365";
             HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
+            // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
             var columns = json["history"]["columns"].ToObject<List<string>>();
             var data = json["history"]["data"].ToObject<List<List<object>>>();
@@ -172,6 +182,7 @@ namespace InvestmentAssistant
                 };
                 StockDataToCalculateVolatilityList.Add(stockDataToCalculateVolatility);
             }
+
             return StockDataToCalculateVolatilityList;
         }
     }

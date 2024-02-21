@@ -16,7 +16,7 @@ namespace InvestmentAssistant
             string result;
             if (investmentGoalComboBox.SelectedItem == null || investmentHorizonComboBox.SelectedItem == null || riskAccountingComboBox.SelectedItem == null || expectedReturnComboBox.SelectedItem == null)
             {
-                return result = "Заполниет все поля";
+                return result = "Заполните все поля";
             }
             int[,] matches = new int[strategyAndConditions.StrategyAndConditionsList.Count, userSelection.Length];
 

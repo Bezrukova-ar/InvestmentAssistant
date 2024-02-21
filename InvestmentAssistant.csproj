@@ -113,7 +113,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\Strategy.cs" />
+    <Compile Include="Model\Strategy\Strategy.cs" />
     <Compile Include="SecurityService.cs" />
     <Compile Include="StrategyAndConditions.cs" />
     <Compile Include="StrategyService.cs" />
@@ -196,6 +196,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -116,6 +116,7 @@
     <Compile Include="Model\Strategy.cs" />
     <Compile Include="SecurityService.cs" />
     <Compile Include="StrategyAndConditions.cs" />
+    <Compile Include="StrategyService.cs" />
     <Page Include="Assets\Icons\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

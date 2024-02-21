@@ -54,8 +54,6 @@ namespace InvestmentAssistant.Pages
         string resultVolatilityIndex;
         /// <summary> Результат расчета среднего отклонения</summary>
         string resultAverageDeviation;
-        /// <summary> Проверка выполнения метода</summary>
-        private bool isExecuting = false;
 
         public StatisticsPage()
         {

@@ -1,7 +1,9 @@
 ﻿using InvestmentAssistant.Model;
+using InvestmentAssistant.Model.Strategy;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -92,5 +94,119 @@ namespace InvestmentAssistant
                 dataToCalculateVolatilityDictionary.Add(index++, stockDataToCalculateVolatility);
             }
         }
+        /// <summary> Метод для заполнения данными о ценных бумагах для формирования портфеля</summary>
+        public async Task FillStockDataList(List<StockData> stockDataList)
+        {
+            var stockData = await financeAPI.GetListOfSecuritiesTakingIntoAccountTheTradingMode();
+            foreach (var security in stockData)
+            {
+                stockDataList.Add(new StockData
+                {
+                    SecurityId = security.SecurityId,
+                    SecurityName = security.SecurityName,
+                    BoardID = security.BoardID,
+                    CurrentSharePrice = security.CurrentSharePrice
+                });
+            }
+        }
+        /// <summary> Метод для заполнения данными о ценных бумагах для формирования портфеля</summary>
+        /*public async Task FillStockDataList(List<StockData> stockDataList, IProgress<int> progress)
+        {
+            var stockData = await financeAPI.GetListOfSecuritiesTakingIntoAccountTheTradingMode();
+
+            // Общее количество элементов для обработки
+            int totalItems = stockData.Count;
+            int processedItems = 0;
+
+            foreach (var security in stockData)
+            {
+                stockDataList.Add(new StockData
+                {
+                    SecurityId = security.SecurityId,
+                    SecurityName = security.SecurityName,
+                    BoardID = security.BoardID,
+                    CurrentSharePrice = security.CurrentSharePrice
+                });
+
+                // Увеличиваем количество обработанных элементов
+                processedItems++;
+
+                // Вычисляем прогресс в процентах
+                int progressPercentage = processedItems * 100 / totalItems;
+
+                // Отправляем прогресс через объект Progress
+                progress.Report(progressPercentage);
+
+                // Здесь можно добавить дополнительную задержку, если необходимо
+                //await Task.Delay(100); // Пример задержки
+
+            }
+        }*/
+        /// <summary> Метод для заполнения данными для расчёта</summary>
+        public async Task FillDataForCalculationsList(List<HistoricalDataToCalculate> dataForCalculationsList, List<StockData> stockDataList, IProgress<int> progress)
+        {
+            var uniqueSecIDs = stockDataList.Select(s => s.SecurityId).Distinct().ToList();
+
+            // Общее количество элементов для обработки
+            int totalItems = uniqueSecIDs.Count;
+            int processedItems = 0;
+
+            foreach (var symbol in uniqueSecIDs)
+            {
+                var dataForCalculations = await financeAPI.GetListToCalculateProfitability(symbol);
+
+                foreach (var data in dataForCalculations)
+                {
+                    dataForCalculationsList.Add(new HistoricalDataToCalculate
+                    {
+                        SecurityId = data.SecurityId,
+                        BoardID = data.BoardID,
+                        Open = data.Open,
+                        Close = data.Close,
+                        TradeDate = data.TradeDate,
+                        High = data.High,
+                        Low = data.Low,
+                        Profitability = (data.Close - data.Open) / data.Open * 100,
+                        Risk = (data.High - data.Low)/((data.High + data.Low)/2)
+                    });
+                }
+                // Увеличиваем количество обработанных элементов
+                processedItems++;
+
+                // Вычисляем прогресс в процентах
+                int progressPercentage = processedItems * 100 / totalItems;
+
+                // Отправляем прогресс через объект Progress
+                progress.Report(progressPercentage);
+
+                // Здесь можно добавить дополнительную задержку, если необходимо
+                //await Task.Delay(100); // Пример задержки
+            }
+        }
+        /// <summary> Метод для заполнения данными для расчёта</summary>
+        /*public async Task FillDataForCalculationsList(List<HistoricalDataToCalculate> dataForCalculationsList, List<StockData> stockDataList)
+        {
+            var uniqueSecIDs = stockDataList.Select(s => s.SecurityId).Distinct().ToList();
+
+            foreach (var symbol in uniqueSecIDs)
+            {
+                var dataForCalculations = await financeAPI.GetListToCalculateProfitability(symbol);
+
+                foreach (var data in dataForCalculations)
+                {
+                    dataForCalculationsList.Add(new HistoricalDataToCalculate
+                    {
+                        SecurityId = data.SecurityId,
+                        BoardID = data.BoardID,
+                        Open = data.Open,
+                        Close = data.Close,
+                        TradeDate = data.TradeDate,
+                        High = data.High,
+                        Low = data.Low
+                    });
+                }
+            }
+        }*/
+
     }
 }

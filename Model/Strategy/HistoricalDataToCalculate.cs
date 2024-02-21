@@ -19,5 +19,9 @@ namespace InvestmentAssistant.Model.Strategy
         public double High { get; set; }
         /// <summary> Представляет дату торгов  </summary>
         public DateTime TradeDate { get; set; }
+        /// <summary> Представляет расчитаную доходность </summary>
+        public double Profitability{ get; set; }
+        /// <summary> Представляет расчитанный риск </summary>
+        public double Risk { get; set; }
     }
 }

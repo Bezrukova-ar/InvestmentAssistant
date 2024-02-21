@@ -229,8 +229,8 @@ namespace InvestmentAssistant
 
             // Парсим JSON ответ
             var json = JsonConvert.DeserializeObject<JObject>(responseBody);
-            var columns = json["securities"]["columns"].ToObject<List<string>>();
-            var data = json["securities"]["data"].ToObject<List<List<object>>>();
+            var columns = json["history"]["columns"].ToObject<List<string>>();
+            var data = json["history"]["data"].ToObject<List<List<object>>>();
 
             // Сопоставление данных с объектами CandlestickData
             List<HistoricalDataToCalculate> HistoricalDataToCalculateList = new List<HistoricalDataToCalculate>();

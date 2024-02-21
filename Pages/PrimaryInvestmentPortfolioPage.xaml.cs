@@ -1,4 +1,5 @@
 ﻿using InvestmentAssistant.Model;
+using InvestmentAssistant.Model.Strategy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,13 @@ namespace InvestmentAssistant.Pages
         StrategyAndConditions strategyAndConditions = new StrategyAndConditions();
         /// <summary> Экземпляр класса для стратегий</summary>
         StrategyService strategyService = new StrategyService();
+        /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
+        FinanceDataHandler financeDataHandler = new FinanceDataHandler();
+
+        /// <summary> Коллекция, где хранится информация для формирования инвестиционного портфеля</summary>
+        List<StockData> stockDataList = new List<StockData>();
+        /// <summary> Коллекция, где хранится информация для расчетов для формирования инвестиционного портфеля</summary>
+        List<HistoricalDataToCalculate> dataForCalculationsList = new List<HistoricalDataToCalculate>();
 
         string[] userSelection = { null, null, null, null };
 
@@ -71,12 +79,52 @@ namespace InvestmentAssistant.Pages
             strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (userSelection.Any(item => item == null))
+            if (userSelection.Any(item => item == null) || capitalTextBox.Text == null)
             {
                 MessageBox.Show("Сначала заполните все поля");
                 return;
+            }
+            if (stockDataList.Count>0)
+            {
+                return;
+            }
+
+            // Создаем объект Progress для обновления прогресс-бара
+            var progress = new Progress<int>(value =>
+            {
+                // Обновляем прогресс-бар
+                progressBar.Value = value;
+            });
+
+            await financeDataHandler.FillStockDataList(stockDataList);
+
+            // Вызываем второй метод с обновлением прогресса
+            await Task.Run(async () =>
+            {
+                await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
+            });
+
+            /*await financeDataHandler.FillStockDataList(stockDataList);
+            await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList);*/
+
+            // Предполагая, что dataForCalculationsList - это список объектов с указанными свойствами
+            var profitabilityList = (from item in dataForCalculationsList
+                                     group item by new { item.SecurityId, item.BoardID } into groupedData
+                                     select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
+
+            // Вывод значений массива доходности в MessageBox для каждой группы
+            foreach (var profitabilityData in profitabilityList)
+            {
+                string message = $"SecurityId: {profitabilityData.SecurityId}, BoardID: {profitabilityData.BoardID}, Массив доходности: ";
+                foreach (var profitabilityValue in profitabilityData.ProfitabilityArray)
+                {
+                    message += $"{profitabilityValue}, ";
+                }
+
+                MessageBox.Show(message);
             }
         }
     }

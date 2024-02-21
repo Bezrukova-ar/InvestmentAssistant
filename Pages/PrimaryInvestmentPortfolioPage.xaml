@@ -51,7 +51,7 @@
             <ComboBox x:Name="expectedReturnComboBox" SelectionChanged="expectedReturnComboBox_SelectionChanged"  Grid.Row="9" Margin="10,0,10,0"  BorderBrush="#B2370E66" FontSize="18" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="10" Text="Предложенная стретегия:" FontWeight="Heavy" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="strategyTextBlock" Text="" Grid.Row="11" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Top"/>
-            <Button Grid.Row="12" Grid.RowSpan="2" Content="Расчёт" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Margin="15"/>
+            <Button Grid.Row="12" Click="Button_Click" Grid.RowSpan="2" Content="Расчёт" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Margin="15"/>
         </Grid>
     </Border>
 </Page>

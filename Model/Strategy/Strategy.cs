@@ -1,4 +1,4 @@
-﻿namespace InvestmentAssistant.Model
+﻿namespace InvestmentAssistant.Model.Strategy
 {    /// <summary> Представляет структуру данных, используемую для сопоставления стратегии и ее условий </summary>
     class Strategy
     {

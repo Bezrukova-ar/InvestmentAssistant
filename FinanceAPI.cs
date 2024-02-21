@@ -1,4 +1,5 @@
 ﻿using InvestmentAssistant.Model;
+using InvestmentAssistant.Model.Strategy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -183,6 +184,72 @@ namespace InvestmentAssistant
             }
 
             return StockDataToCalculateVolatilityList;
+        }
+
+        /// <summary> Метод получения списка бумаг на московской бирже с учётом режима торгов </summary>
+        public async Task<List<StockData>> GetListOfSecuritiesTakingIntoAccountTheTradingMode()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"engines/stock/markets/shares/securities.json");
+
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            // Парсим JSON ответ
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["securities"]["columns"].ToObject<List<string>>();
+            var data = json["securities"]["data"].ToObject<List<List<object>>>();
+
+            // Сопоставление данных с объектами CandlestickData
+            List<StockData> StockDataList = new List<StockData>();
+            foreach (var item in data)
+            {
+                var stockData = new StockData
+                {
+                    SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
+                    SecurityName = Convert.ToString(item[columns.IndexOf("SECNAME")]),
+                    BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
+                    CurrentSharePrice=Convert.ToDouble(item[columns.IndexOf("PREVPRICE")])
+                };
+                StockDataList.Add(stockData);
+            }
+
+            return StockDataList;
+        }
+
+        /// <summary> Метод получения исторических данных для расчета доходности </summary>
+        public async Task<List<HistoricalDataToCalculate>> GetListToCalculateProfitability(string symbol)
+        {
+            string fromDate = DateTime.Now.AddYears(-3).ToString("yyyy-MM-dd");
+            string toDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"history/engines/stock/markets/shares/securities/{symbol}.json?from={fromDate}&till={toDate}");
+
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            // Парсим JSON ответ
+            var json = JsonConvert.DeserializeObject<JObject>(responseBody);
+            var columns = json["securities"]["columns"].ToObject<List<string>>();
+            var data = json["securities"]["data"].ToObject<List<List<object>>>();
+
+            // Сопоставление данных с объектами CandlestickData
+            List<HistoricalDataToCalculate> HistoricalDataToCalculateList = new List<HistoricalDataToCalculate>();
+            foreach (var item in data)
+            {
+                var historicalDataToCalculateList = new HistoricalDataToCalculate
+                {
+                    SecurityId = Convert.ToString(item[columns.IndexOf("SECID")]),
+                    BoardID = Convert.ToString(item[columns.IndexOf("BOARDID")]),
+                    Open = Convert.ToDouble(item[columns.IndexOf("OPEN")]),
+                    Close = Convert.ToDouble(item[columns.IndexOf("CLOSE")]),
+                    TradeDate = Convert.ToDateTime(item[columns.IndexOf("TRADEDATE")]),
+                    High = Convert.ToDouble(item[columns.IndexOf("HIGH")]),
+                    Low = Convert.ToDouble(item[columns.IndexOf("LOW")])
+                };
+                HistoricalDataToCalculateList.Add(historicalDataToCalculateList);
+            }
+
+            return HistoricalDataToCalculateList;
         }
     }
 }

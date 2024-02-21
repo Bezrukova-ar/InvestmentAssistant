@@ -23,7 +23,7 @@ namespace InvestmentAssistant.Pages
         /// <summary> Экземпляр класса для стратегий</summary>
         StrategyService strategyService = new StrategyService();
 
-        string[] userSelection = { "null", "null", "null", "null" };
+        string[] userSelection = { null, null, null, null };
 
         public PrimaryInvestmentPortfolioPage()
         {
@@ -69,6 +69,15 @@ namespace InvestmentAssistant.Pages
         {
             userSelection[3] = expectedReturnComboBox.SelectedItem.ToString();
             strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
-        }       
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (userSelection.Any(item => item == null))
+            {
+                MessageBox.Show("Сначала заполните все поля");
+                return;
+            }
+        }
     }
 }

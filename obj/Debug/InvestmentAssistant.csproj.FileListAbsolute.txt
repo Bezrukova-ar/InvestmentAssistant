@@ -72,3 +72,6 @@ C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\De
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\System.Numerics.Tensors.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\System.Threading.Channels.xml
 C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\obj\Debug\InvestmentAssistant.csproj.AssemblyReference.cache
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\itextsharp.dll
+C:\Users\USER\Desktop\Дипломный проект\InvestmentAssistant\bin\Debug\itextsharp.xml

@@ -1,6 +1,9 @@
 ﻿using InvestmentAssistant.Model.Strategy;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -150,21 +153,9 @@ namespace InvestmentAssistant.Pages
                     capital = Convert.ToDouble(capitalTextBox.Text);
                     portfolios = PortfolioBuilder.BuildConservativePortfolio(stockDataList, capital);
 
-                    // Вывод результатов в MessageBox
-                    /*string message = "Инвестиционный портфель:\n\n";
-                    
-                    double sum = 0;
-                    foreach (var investment in portfolios)
-                    {
-                        message += $"Акция: {investment.SecurityName}\n";
-                        message += $"режим торгов: {investment.BoardID}\n";
-                        message += $"Количество: {investment.Quantity}\n";
-                        message += $"Сумма инвестиций: {investment.TotalInvestment}\n\n";
-                        sum += investment.TotalInvestment;
-                    }
-                    MessageBox.Show(message);
-                    MessageBox.Show(sum.ToString());*/
                     investmentPortfolioDataGrid.Visibility = Visibility;
+                    savePDFButton.Visibility = Visibility;
+                    saveXLXSButton.Visibility = Visibility;
                     investmentPortfolioDataGrid.ItemsSource = portfolios;
                     break;
                 
@@ -188,6 +179,61 @@ namespace InvestmentAssistant.Pages
                     MessageBox.Show("Какие то проблемы"); ;
                     break;
             }
+        }
+
+        private void savePDFButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Создание и настройка диалогового окна выбора места сохранения
+            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            saveFileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+            saveFileDialog.Title = "Save PDF";
+
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // Создание документа и писателя PDF
+                Document document = new Document();
+                PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create));
+                document.Open();
+
+                // Установка шрифта с поддержкой кириллицы
+                BaseFont baseFont = BaseFont.CreateFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                Font font = new Font(baseFont);
+
+                // Создание таблицы для результатов портфелей
+                PdfPTable table = new PdfPTable(5);
+
+                // Добавление заголовков столбцов в таблицу
+                table.AddCell(new PdfPCell(new Phrase("Security ID", font)));
+                table.AddCell(new PdfPCell(new Phrase("Security Name", font)));
+                table.AddCell(new PdfPCell(new Phrase("Board ID", font)));
+                table.AddCell(new PdfPCell(new Phrase("Quantity", font)));
+                table.AddCell(new PdfPCell(new Phrase("Total Investment", font)));
+
+                // Добавление данных портфелей в таблицу
+                foreach (var portfolio in portfolios)
+                {
+                    table.AddCell(new PdfPCell(new Phrase(portfolio.SecurityId, font)));
+                    table.AddCell(new PdfPCell(new Phrase(portfolio.SecurityName, font)));
+                    table.AddCell(new PdfPCell(new Phrase(portfolio.BoardID, font)));
+                    table.AddCell(new PdfPCell(new Phrase(portfolio.Quantity.ToString(), font)));
+                    table.AddCell(new PdfPCell(new Phrase(portfolio.TotalInvestment.ToString(), font)));
+                }
+
+                // Добавление таблицы в документ
+                document.Add(table);
+
+                // Закрытие документа и остановка писателя PDF
+                document.Close();
+                writer.Close();
+
+                // Открытие диалогового окна с сообщением об успешном сохранении
+                System.Windows.Forms.MessageBox.Show("Результаты успешно сохранены в файл PDF.", "Успех", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            }
+        }
+
+        private void saveXLXSButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

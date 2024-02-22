@@ -54,7 +54,7 @@
             <Button Grid.Row="12" Click="Button_Click" Grid.RowSpan="2"  Content="Расчёт" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Margin="25" />
 
             <ProgressBar Visibility="Hidden" Grid.Row="0" Grid.RowSpan="9" Grid.Column="1"  x:Name="progressBar" Minimum="0" Maximum="100" Margin="15" />
-            <DataGrid Grid.Column="1" Grid.Row="0" Grid.RowSpan="9" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top"  />
+            <DataGrid x:Name="investmentPortfolioDataGrid" Grid.Column="1" Visibility="Collapsed" Grid.Row="0" Grid.RowSpan="9"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="5" BorderBrush="#B2370E66" IsReadOnly="True" />
         </Grid>
     </Border>
 </Page>

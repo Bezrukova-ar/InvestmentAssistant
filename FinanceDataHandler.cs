@@ -100,13 +100,16 @@ namespace InvestmentAssistant
             var stockData = await financeAPI.GetListOfSecuritiesTakingIntoAccountTheTradingMode();
             foreach (var security in stockData)
             {
-                stockDataList.Add(new StockData
+                if(security.CurrentSharePrice!=0)
                 {
-                    SecurityId = security.SecurityId,
-                    SecurityName = security.SecurityName,
-                    BoardID = security.BoardID,
-                    CurrentSharePrice = security.CurrentSharePrice
-                });
+                    stockDataList.Add(new StockData
+                    {
+                        SecurityId = security.SecurityId,
+                        SecurityName = security.SecurityName,
+                        BoardID = security.BoardID,
+                        CurrentSharePrice = security.CurrentSharePrice
+                    });
+                }               
             }
         }
         /// <summary> Метод для заполнения данными о ценных бумагах для формирования портфеля</summary>

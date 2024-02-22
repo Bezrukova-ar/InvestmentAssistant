@@ -130,66 +130,6 @@ namespace InvestmentAssistant
             }
 
             return bestAlpha;
-        }
-
-        /// <summary>Подбор акций для формирования инвестиционного портфеля методом консервативной стратегии</summary>
-        public List<Portfolio> OptimizePortfolio(List<StockData> stockDataList, double maxCapital)
-        {
-            var portfolio = new List<Portfolio>();
-            var remainingCapital = maxCapital;
-
-            while (remainingCapital > 0)
-            {
-                StockData selectedStock = null;
-                double maxExpectedReturn = 0;
-
-                foreach (var stock in stockDataList)
-                {
-                    if (stock.ProjectedStockReturn >= maxExpectedReturn && stock.CurrentSharePrice <= remainingCapital)
-                    {
-                        selectedStock = stock;
-                        maxExpectedReturn = stock.ProjectedStockReturn;
-                    }
-                }
-
-                if (selectedStock != null)
-                {
-                    var shareCount = Math.Floor(remainingCapital / selectedStock.CurrentSharePrice);
-                    var portfolioValue = shareCount * selectedStock.CurrentSharePrice;
-
-                    if (portfolioValue > remainingCapital)
-                    {
-                        shareCount--;
-                    }
-
-                    if (shareCount > 0)
-                    {
-                        portfolio.Add(new Portfolio
-                        {
-                            SecurityId = selectedStock.SecurityId,
-                            name = selectedStock.SecurityName,
-                            cena= selectedStock.CurrentSharePrice,
-                            ShareCount = shareCount
-                        });
-
-                        remainingCapital -= shareCount * selectedStock.CurrentSharePrice;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return portfolio;
-        }
-
-        public class Portfolio
-        {
-            public string SecurityId { get; set; }
-            public string name { get; set; }
-            public double cena { get; set; }
-            public double ShareCount { get; set; }
-        }
+        }      
     }
 }

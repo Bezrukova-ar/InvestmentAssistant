@@ -20,13 +20,15 @@ namespace InvestmentAssistant.Pages
         /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
 
-
         /// <summary> Коллекция, где хранится информация для формирования инвестиционного портфеля</summary>
         List<StockData> stockDataList = new List<StockData>();
         /// <summary> Коллекция, где хранится информация для расчетов для формирования инвестиционного портфеля</summary>
         List<HistoricalDataToCalculate> dataForCalculationsList = new List<HistoricalDataToCalculate>();
+        /// <summary> Коллекция, где хранится список инвестиционного портфеля</summary>
+        List<InvestmentPortfolio> portfolios = new List<InvestmentPortfolio>();
 
         string[] userSelection = { null, null, null, null };
+        double capital;
 
         public PrimaryInvestmentPortfolioPage()
         {
@@ -76,9 +78,7 @@ namespace InvestmentAssistant.Pages
 
 
         private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            
-
+        {          
             if (userSelection.Any(item => item == null) || capitalTextBox.Text == "")
             {
                 MessageBox.Show("Сначала заполните все поля");
@@ -86,16 +86,7 @@ namespace InvestmentAssistant.Pages
             }
             if (stockDataList.Count > 0)
             {
-                double capital1 = Convert.ToDouble(capitalTextBox.Text);
-                var result1 = strategyService.OptimizePortfolio(stockDataList, capital1);
-
-                // Отображаем результат в окне сообщений
-                string message1 = "Оптимальный портфель:\n";
-                foreach (var portfolio in result1)
-                {
-                    message1 += $"Акция: {portfolio.SecurityId}, Количество акций: {portfolio.ShareCount}\n";
-                }
-                MessageBox.Show(message1);
+                SamplingStrategy(strategyTextBlock.Text);
                 return;
             }
 
@@ -145,28 +136,52 @@ namespace InvestmentAssistant.Pages
 
                 // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
                 strategyService.ExponentialSmoothingRisk(stockDataList, dailyReturns, alpha, securityId, boardId);
-            }
-           
+            }          
             progressBar.Visibility = Visibility.Hidden;
 
-            double capital = Convert.ToDouble(capitalTextBox.Text);
+            SamplingStrategy(strategyTextBlock.Text);
+        }
 
-            /* List<StockData> optimalStocks = strategyService.GetOptimalStocks(stockDataList, capital);
-
-             foreach (StockData stock in optimalStocks)
-             {
-                 MessageBox.Show($"Security: {stock.SecurityName}, Quantity: {Math.Floor(capital / stock.CurrentSharePrice)}");
-             }*/
-            var result = strategyService.OptimizePortfolio(stockDataList, capital);
-
-            // Отображаем результат в окне сообщений
-            string message = "Оптимальный портфель:\n";
-            foreach (var portfolio in result)
+        private void SamplingStrategy(string strategy)
+        {
+            switch (strategy)
             {
-                message += $"Акция: {portfolio.name}, цена: {portfolio.cena}, Количество акций: {portfolio.ShareCount}\n";
-            }
-            MessageBox.Show(message);
+                case "Консервативная":
+                    capital = Convert.ToDouble(capitalTextBox.Text);
+                    portfolios = PortfolioBuilder.BuildConservativePortfolio(stockDataList, capital);
 
+                    // Вывод результатов в MessageBox
+                    string message1 = "Инвестиционный портфель:\n\n";
+                    foreach (var investment in portfolios)
+                    {
+                        message1 += $"Акция: {investment.SecurityName}\n";
+                        message1 += $"ID: {investment.SecurityId}\n";
+                        message1 += $"Количество: {investment.Quantity}\n";
+                        message1 += $"Сумма инвестиций: {investment.TotalInvestment}\n\n";
+                    }
+                    MessageBox.Show(message1);
+                    break;
+                
+                case "Сбалансированная":
+                    MessageBox.Show("метод для сбланансир");
+                    break;
+                
+                case "Агрессивная":
+                    MessageBox.Show("метод для агрессивн");
+                    break;
+                
+                case "Пассивная":
+                    MessageBox.Show("метод для пассив"); ;
+                    break;
+                
+                case "Активная":
+                    MessageBox.Show("метод для актив"); ;
+                    break;
+               
+                default:
+                    MessageBox.Show("Какие то проблемы"); ;
+                    break;
+            }
         }
     }
 }

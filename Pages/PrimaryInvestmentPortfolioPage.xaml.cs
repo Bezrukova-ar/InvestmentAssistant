@@ -1,6 +1,7 @@
 ﻿using InvestmentAssistant.Model.Strategy;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -233,7 +234,48 @@ namespace InvestmentAssistant.Pages
 
         private void saveXLXSButton_Click(object sender, RoutedEventArgs e)
         {
+            // Создание и настройка диалогового окна выбора места сохранения
+            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
+            saveFileDialog.Title = "Save Excel";
 
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // Создание нового пакета Excel
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                ExcelPackage excelPackage = new ExcelPackage();
+
+                // Создание листа
+                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("Sheet1");
+
+                // Заголовки столбцов
+                worksheet.Cells[1, 1].Value = "Security ID";
+                worksheet.Cells[1, 2].Value = "Security Name";
+                worksheet.Cells[1, 3].Value = "Board ID";
+                worksheet.Cells[1, 4].Value = "Quantity";
+                worksheet.Cells[1, 5].Value = "Total Investment";
+
+                // Добавление данных портфелей в таблицу
+                int row = 2;
+                foreach (var portfolio in portfolios)
+                {
+                    worksheet.Cells[row, 1].Value = portfolio.SecurityId;
+                    worksheet.Cells[row, 2].Value = portfolio.SecurityName;
+                    worksheet.Cells[row, 3].Value = portfolio.BoardID;
+                    worksheet.Cells[row, 4].Value = portfolio.Quantity;
+                    worksheet.Cells[row, 5].Value = portfolio.TotalInvestment;
+                    row++;
+                }
+
+                // Сохранение файла
+                FileInfo excelFile = new FileInfo(saveFileDialog.FileName);
+                excelPackage.SaveAs(excelFile);
+
+                // Освобождение ресурсов
+                excelPackage.Dispose();
+
+                MessageBox.Show("Файл успешно сохранен!");
+            }
         }
     }
 }

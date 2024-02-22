@@ -11,6 +11,7 @@ namespace InvestmentAssistant.Model.Strategy
     {
         public string SecurityId { get; set; }
         public string SecurityName { get; set; }
+        public string BoardID { get; set; }
         public double Quantity { get; set; }
         public double TotalInvestment { get; set; }
     }

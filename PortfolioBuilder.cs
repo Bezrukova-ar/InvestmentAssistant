@@ -19,7 +19,7 @@ namespace InvestmentAssistant
 
             // Создаем инвестиционный портфель
             List<InvestmentPortfolio> portfolio = new List<InvestmentPortfolio>();
-
+            double sum = 0;
             for (int i = 0; i < stockDataList.Count; i++)
             {
                 double investmentAmount = capital * weights[i];
@@ -34,13 +34,16 @@ namespace InvestmentAssistant
                         {
                             SecurityId = stockDataList[i].SecurityId,
                             SecurityName = stockDataList[i].SecurityName,
+                            BoardID = stockDataList[i].BoardID,
                             Quantity = quantity,
                             TotalInvestment = quantity * stockDataList[i].CurrentSharePrice
                         };
-
                         portfolio.Add(investment);
-                    }
+                        sum += quantity * stockDataList[i].CurrentSharePrice;
+                    }                  
                 }
+                if (sum >= capital) 
+                    return portfolio;
             }
 
             return portfolio;
@@ -70,16 +73,15 @@ namespace InvestmentAssistant
         private static double[] MarkowitzModernization(double[,] covarianceMatrix)
         {
             int n = covarianceMatrix.GetLength(0);
-
             double[] weights = new double[n];
 
-            // Расчет весов акций с помощью алгоритма Марковица
+            // Расчет весов акций с разными значениями
             for (int i = 0; i < n; i++)
             {
-                weights[i] = 1.0 / n;
+                weights[i] = (i + 1) / (double)n;
             }
 
             return weights;
         }
-    }  
+    }
 }

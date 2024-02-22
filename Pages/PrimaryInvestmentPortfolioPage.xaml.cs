@@ -151,15 +151,19 @@ namespace InvestmentAssistant.Pages
                     portfolios = PortfolioBuilder.BuildConservativePortfolio(stockDataList, capital);
 
                     // Вывод результатов в MessageBox
-                    string message1 = "Инвестиционный портфель:\n\n";
+                    string message = "Инвестиционный портфель:\n\n";
+                    
+                    double sum = 0;
                     foreach (var investment in portfolios)
                     {
-                        message1 += $"Акция: {investment.SecurityName}\n";
-                        message1 += $"ID: {investment.SecurityId}\n";
-                        message1 += $"Количество: {investment.Quantity}\n";
-                        message1 += $"Сумма инвестиций: {investment.TotalInvestment}\n\n";
+                        message += $"Акция: {investment.SecurityName}\n";
+                        message += $"режим торгов: {investment.SecurityId}\n";
+                        message += $"Количество: {investment.Quantity}\n";
+                        message += $"Сумма инвестиций: {investment.TotalInvestment}\n\n";
+                        sum += investment.TotalInvestment;
                     }
-                    MessageBox.Show(message1);
+                    MessageBox.Show(message);
+                    MessageBox.Show(sum.ToString());
                     break;
                 
                 case "Сбалансированная":

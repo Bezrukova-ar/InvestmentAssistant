@@ -112,39 +112,7 @@ namespace InvestmentAssistant
                 }               
             }
         }
-        /// <summary> Метод для заполнения данными о ценных бумагах для формирования портфеля</summary>
-        /*public async Task FillStockDataList(List<StockData> stockDataList, IProgress<int> progress)
-        {
-            var stockData = await financeAPI.GetListOfSecuritiesTakingIntoAccountTheTradingMode();
 
-            // Общее количество элементов для обработки
-            int totalItems = stockData.Count;
-            int processedItems = 0;
-
-            foreach (var security in stockData)
-            {
-                stockDataList.Add(new StockData
-                {
-                    SecurityId = security.SecurityId,
-                    SecurityName = security.SecurityName,
-                    BoardID = security.BoardID,
-                    CurrentSharePrice = security.CurrentSharePrice
-                });
-
-                // Увеличиваем количество обработанных элементов
-                processedItems++;
-
-                // Вычисляем прогресс в процентах
-                int progressPercentage = processedItems * 100 / totalItems;
-
-                // Отправляем прогресс через объект Progress
-                progress.Report(progressPercentage);
-
-                // Здесь можно добавить дополнительную задержку, если необходимо
-                //await Task.Delay(100); // Пример задержки
-
-            }
-        }*/
         /// <summary> Метод для заполнения данными для расчёта</summary>
         public async Task FillDataForCalculationsList(List<HistoricalDataToCalculate> dataForCalculationsList, List<StockData> stockDataList, IProgress<int> progress)
         {
@@ -160,6 +128,7 @@ namespace InvestmentAssistant
 
                 foreach (var data in dataForCalculations)
                 {
+
                     dataForCalculationsList.Add(new HistoricalDataToCalculate
                     {
                         SecurityId = data.SecurityId,
@@ -170,8 +139,9 @@ namespace InvestmentAssistant
                         High = data.High,
                         Low = data.Low,
                         Profitability = (data.Close - data.Open) / data.Open * 100,
-                        Risk = (data.High - data.Low)/((data.High + data.Low)/2)
+                        Risk = (data.High - data.Low) / ((data.High + data.Low) / 2)
                     });
+
                 }
                 // Увеличиваем количество обработанных элементов
                 processedItems++;

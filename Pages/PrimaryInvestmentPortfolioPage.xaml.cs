@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -76,16 +77,29 @@ namespace InvestmentAssistant.Pages
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (userSelection.Any(item => item == null) || capitalTextBox.Text == null)
+            
+
+            if (userSelection.Any(item => item == null) || capitalTextBox.Text == "")
             {
                 MessageBox.Show("Сначала заполните все поля");
                 return;
             }
-            if (stockDataList.Count>0)
+            if (stockDataList.Count > 0)
             {
+                double capital1 = Convert.ToDouble(capitalTextBox.Text);
+                var result1 = strategyService.OptimizePortfolio(stockDataList, capital1);
+
+                // Отображаем результат в окне сообщений
+                string message1 = "Оптимальный портфель:\n";
+                foreach (var portfolio in result1)
+                {
+                    message1 += $"Акция: {portfolio.SecurityId}, Количество акций: {portfolio.ShareCount}\n";
+                }
+                MessageBox.Show(message1);
                 return;
             }
 
+            progressBar.Visibility =Visibility;
             // Создаем объект Progress для обновления прогресс-бара
             var progress = new Progress<int>(value =>
             {
@@ -93,34 +107,34 @@ namespace InvestmentAssistant.Pages
                 progressBar.Value = value;
             });
 
-             await financeDataHandler.FillStockDataList(stockDataList);
+            await financeDataHandler.FillStockDataList(stockDataList);
 
-              // Вызываем второй метод с обновлением прогресса
-              await Task.Run(async () =>
-              {
-                  await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
-              });
+            // Вызываем второй метод с обновлением прогресса
+            await Task.Run(async () =>
+            {
+                await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
+            });
 
-              //прогнозирование доходности акции
-              /*var profitabilityList = (from item in dataForCalculationsList
-                                       group item by new { item.SecurityId, item.BoardID } into groupedData
-                                       select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
+            //прогнозирование доходности акции
+            var profitabilityList = (from item in dataForCalculationsList
+                                     group item by new { item.SecurityId, item.BoardID } into groupedData
+                                     select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
 
-              foreach (var profitabilityData in profitabilityList)
-              {
-                  double[] dailyReturns = profitabilityData.ProfitabilityArray;
-                  double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
-                  string securityId = profitabilityData.SecurityId;
-                  string boardId = profitabilityData.BoardID;
+            foreach (var profitabilityData in profitabilityList)
+            {
+                double[] dailyReturns = profitabilityData.ProfitabilityArray;
+                double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
+                string securityId = profitabilityData.SecurityId;
+                string boardId = profitabilityData.BoardID;
 
-                  // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
-                  strategyService.ExponentialSmoothingProfitability(stockDataList, dailyReturns, alpha, securityId, boardId);
-              }*/
+                // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
+                strategyService.ExponentialSmoothingProfitability(stockDataList, dailyReturns, alpha, securityId, boardId);
+            }
 
             //прогнозирование рисков акции
             var riskList = (from item in dataForCalculationsList
-                                     group item by new { item.SecurityId, item.BoardID } into groupedData
-                                     select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, RiskArray = groupedData.Select(x => x.Risk).ToArray() }).ToList();
+                            group item by new { item.SecurityId, item.BoardID } into groupedData
+                            select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, RiskArray = groupedData.Select(x => x.Risk).ToArray() }).ToList();
 
             foreach (var riskData in riskList)
             {
@@ -132,6 +146,26 @@ namespace InvestmentAssistant.Pages
                 // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
                 strategyService.ExponentialSmoothingRisk(stockDataList, dailyReturns, alpha, securityId, boardId);
             }
+           
+            progressBar.Visibility = Visibility.Hidden;
+
+            double capital = Convert.ToDouble(capitalTextBox.Text);
+
+            /* List<StockData> optimalStocks = strategyService.GetOptimalStocks(stockDataList, capital);
+
+             foreach (StockData stock in optimalStocks)
+             {
+                 MessageBox.Show($"Security: {stock.SecurityName}, Quantity: {Math.Floor(capital / stock.CurrentSharePrice)}");
+             }*/
+            var result = strategyService.OptimizePortfolio(stockDataList, capital);
+
+            // Отображаем результат в окне сообщений
+            string message = "Оптимальный портфель:\n";
+            foreach (var portfolio in result)
+            {
+                message += $"Акция: {portfolio.name}, цена: {portfolio.cena}, Количество акций: {portfolio.ShareCount}\n";
+            }
+            MessageBox.Show(message);
 
         }
     }

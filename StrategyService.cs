@@ -70,14 +70,15 @@ namespace InvestmentAssistant
             forecast = data[0];
 
             // Применяем экспоненциальное сглаживание для остальных значений
-            for (int i = 1; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 forecast = alpha * data[i] + (1 - alpha) * forecast;
-            }
-
-            // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
-            int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
-            stockDataList[index].ProjectedStockReturn = forecast;
+                // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID                
+                int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
+                if (index != -1)
+                    stockDataList[index].ProjectedStockReturn = forecast;
+                else /*что-то додумать, добавлять новые записи, а еще обрабатывать случаи когда рассчитывается не число*/;
+            }            
         }
 
         /// <summary> Прогнозирование рисков акции методом экспоненциального сглаживания</summary>
@@ -91,15 +92,16 @@ namespace InvestmentAssistant
             // Применяем экспоненциальное сглаживание для остальных значений
             for (int i = 1; i < data.Length; i++)
             {
-                forecast = alpha * data[i] + (1 - alpha) * forecast;                
-            }
-            // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
-            int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
-            stockDataList[index].StockRisk = forecast;
+                forecast = alpha * data[i] + (1 - alpha) * forecast;
+                // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
+                int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
+                if (index != -1)
+                    stockDataList[index].StockRisk = forecast;
+                else /*что-то додумать, добавлять новые записи, а еще обрабатывать случаи когда рассчитывается не число*/;
+            }         
         }
 
-        /// <summary> Вычисление оптимального значения коэффициента сглаживания.
-        /// Методом наименьших квадратов</summary>
+        /// <summary> Вычисление оптимального значения коэффициента сглаживания. Методом наименьших квадратов</summary>
         public double AutoExponentialSmoothing(double[] data)
         {
             double bestAlpha = 0.0;
@@ -128,6 +130,66 @@ namespace InvestmentAssistant
             }
 
             return bestAlpha;
+        }
+
+        /// <summary>Подбор акций для формирования инвестиционного портфеля методом консервативной стратегии</summary>
+        public List<Portfolio> OptimizePortfolio(List<StockData> stockDataList, double maxCapital)
+        {
+            var portfolio = new List<Portfolio>();
+            var remainingCapital = maxCapital;
+
+            while (remainingCapital > 0)
+            {
+                StockData selectedStock = null;
+                double maxExpectedReturn = 0;
+
+                foreach (var stock in stockDataList)
+                {
+                    if (stock.ProjectedStockReturn >= maxExpectedReturn && stock.CurrentSharePrice <= remainingCapital)
+                    {
+                        selectedStock = stock;
+                        maxExpectedReturn = stock.ProjectedStockReturn;
+                    }
+                }
+
+                if (selectedStock != null)
+                {
+                    var shareCount = Math.Floor(remainingCapital / selectedStock.CurrentSharePrice);
+                    var portfolioValue = shareCount * selectedStock.CurrentSharePrice;
+
+                    if (portfolioValue > remainingCapital)
+                    {
+                        shareCount--;
+                    }
+
+                    if (shareCount > 0)
+                    {
+                        portfolio.Add(new Portfolio
+                        {
+                            SecurityId = selectedStock.SecurityId,
+                            name = selectedStock.SecurityName,
+                            cena= selectedStock.CurrentSharePrice,
+                            ShareCount = shareCount
+                        });
+
+                        remainingCapital -= shareCount * selectedStock.CurrentSharePrice;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return portfolio;
+        }
+
+        public class Portfolio
+        {
+            public string SecurityId { get; set; }
+            public string name { get; set; }
+            public double cena { get; set; }
+            public double ShareCount { get; set; }
         }
     }
 }

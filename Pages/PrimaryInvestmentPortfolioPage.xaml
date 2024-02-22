@@ -53,7 +53,7 @@
             <TextBlock x:Name="strategyTextBlock" Text="" Grid.Row="11" FontSize="18" Foreground="#FF363636" TextAlignment="Justify" FontFamily="Trebuchet MS" Margin="12,0,0,0" VerticalAlignment="Top"/>
             <Button Grid.Row="12" Click="Button_Click" Grid.RowSpan="2" Content="Расчёт" Background="#FF795BFF" BorderBrush="#FF885ED3" Foreground="White" Margin="15"/>
 
-            <ProgressBar Grid.Row="0" Grid.RowSpan="9" Grid.Column="1"  x:Name="progressBar" Minimum="0" Maximum="100"  />
+            <ProgressBar Visibility="Hidden" Grid.Row="0" Grid.RowSpan="9" Grid.Column="1"  x:Name="progressBar" Minimum="0" Maximum="100"  />
         </Grid>
     </Border>
 </Page>

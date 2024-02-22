@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/avatars/avatar-2.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("packages/accord.3.8.0/build/accord.dll.config")]
 
 

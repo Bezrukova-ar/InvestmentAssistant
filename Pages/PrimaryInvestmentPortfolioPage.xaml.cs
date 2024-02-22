@@ -1,19 +1,13 @@
-﻿using InvestmentAssistant.Model;
-using InvestmentAssistant.Model.Strategy;
+﻿using InvestmentAssistant.Model.Strategy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
+
 
 namespace InvestmentAssistant.Pages
 {
@@ -25,6 +19,7 @@ namespace InvestmentAssistant.Pages
         StrategyService strategyService = new StrategyService();
         /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
+
 
         /// <summary> Коллекция, где хранится информация для формирования инвестиционного портфеля</summary>
         List<StockData> stockDataList = new List<StockData>();
@@ -107,25 +102,23 @@ namespace InvestmentAssistant.Pages
                 await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
             });
 
-            /*await financeDataHandler.FillStockDataList(stockDataList);
-            await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList);*/
-
-            // Предполагая, что dataForCalculationsList - это список объектов с указанными свойствами
+            //прогнозирование доходности акции
             var profitabilityList = (from item in dataForCalculationsList
                                      group item by new { item.SecurityId, item.BoardID } into groupedData
                                      select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
 
-            // Вывод значений массива доходности в MessageBox для каждой группы
             foreach (var profitabilityData in profitabilityList)
             {
-                string message = $"SecurityId: {profitabilityData.SecurityId}, BoardID: {profitabilityData.BoardID}, Массив доходности: ";
-                foreach (var profitabilityValue in profitabilityData.ProfitabilityArray)
-                {
-                    message += $"{profitabilityValue}, ";
-                }
+                double[] dailyReturns = profitabilityData.ProfitabilityArray;
+                double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
+                string securityId = profitabilityData.SecurityId;
+                string boardId = profitabilityData.BoardID;
 
-                MessageBox.Show(message);
+                // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
+                strategyService.ExponentialSmoothing(stockDataList, dailyReturns, alpha, securityId, boardId);
             }
-        }
+
+            //прогнозирование рисков акции
+        }        
     }
 }

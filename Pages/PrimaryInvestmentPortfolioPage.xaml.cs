@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 
-
 namespace InvestmentAssistant.Pages
 {
     public partial class PrimaryInvestmentPortfolioPage : Page
@@ -94,31 +93,46 @@ namespace InvestmentAssistant.Pages
                 progressBar.Value = value;
             });
 
-            await financeDataHandler.FillStockDataList(stockDataList);
+             await financeDataHandler.FillStockDataList(stockDataList);
 
-            // Вызываем второй метод с обновлением прогресса
-            await Task.Run(async () =>
-            {
-                await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
-            });
+              // Вызываем второй метод с обновлением прогресса
+              await Task.Run(async () =>
+              {
+                  await financeDataHandler.FillDataForCalculationsList(dataForCalculationsList, stockDataList, progress);
+              });
 
-            //прогнозирование доходности акции
-            var profitabilityList = (from item in dataForCalculationsList
-                                     group item by new { item.SecurityId, item.BoardID } into groupedData
-                                     select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
+              //прогнозирование доходности акции
+              /*var profitabilityList = (from item in dataForCalculationsList
+                                       group item by new { item.SecurityId, item.BoardID } into groupedData
+                                       select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
 
-            foreach (var profitabilityData in profitabilityList)
-            {
-                double[] dailyReturns = profitabilityData.ProfitabilityArray;
-                double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
-                string securityId = profitabilityData.SecurityId;
-                string boardId = profitabilityData.BoardID;
+              foreach (var profitabilityData in profitabilityList)
+              {
+                  double[] dailyReturns = profitabilityData.ProfitabilityArray;
+                  double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
+                  string securityId = profitabilityData.SecurityId;
+                  string boardId = profitabilityData.BoardID;
 
-                // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
-                strategyService.ExponentialSmoothing(stockDataList, dailyReturns, alpha, securityId, boardId);
-            }
+                  // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
+                  strategyService.ExponentialSmoothingProfitability(stockDataList, dailyReturns, alpha, securityId, boardId);
+              }*/
 
             //прогнозирование рисков акции
-        }        
+            var riskList = (from item in dataForCalculationsList
+                                     group item by new { item.SecurityId, item.BoardID } into groupedData
+                                     select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, RiskArray = groupedData.Select(x => x.Risk).ToArray() }).ToList();
+
+            foreach (var riskData in riskList)
+            {
+                double[] dailyReturns = riskData.RiskArray;
+                double alpha = strategyService.AutoExponentialSmoothing(dailyReturns);
+                string securityId = riskData.SecurityId;
+                string boardId = riskData.BoardID;
+
+                // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
+                strategyService.ExponentialSmoothingRisk(stockDataList, dailyReturns, alpha, securityId, boardId);
+            }
+
+        }
     }
 }

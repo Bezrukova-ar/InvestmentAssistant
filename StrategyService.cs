@@ -62,7 +62,7 @@ namespace InvestmentAssistant
         }
 
         /// <summary> Прогнозирование доходности акции методом экспоненциального сглаживания</summary>
-        public void ExponentialSmoothing(List<StockData> stockDataList, double[] data, double alpha, string securityId, string boardId)
+        public void ExponentialSmoothingProfitability(List<StockData> stockDataList, double[] data, double alpha, string securityId, string boardId)
         {
             double forecast = 0;
 
@@ -73,11 +73,29 @@ namespace InvestmentAssistant
             for (int i = 1; i < data.Length; i++)
             {
                 forecast = alpha * data[i] + (1 - alpha) * forecast;
-
-                // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
-                int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
-                stockDataList[index].ProjectedStockReturn = forecast;
             }
+
+            // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
+            int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
+            stockDataList[index].ProjectedStockReturn = forecast;
+        }
+
+        /// <summary> Прогнозирование рисков акции методом экспоненциального сглаживания</summary>
+        public void ExponentialSmoothingRisk(List<StockData> stockDataList, double[] data, double alpha, string securityId, string boardId)
+        {
+            double forecast = 0;
+
+            // Инициализируем прогноз первым значением
+            forecast = data[0];
+
+            // Применяем экспоненциальное сглаживание для остальных значений
+            for (int i = 1; i < data.Length; i++)
+            {
+                forecast = alpha * data[i] + (1 - alpha) * forecast;                
+            }
+            // Поиск индекса элемента в stockDataList с совпадающим SecurityId и BoardID
+            int index = stockDataList.FindIndex(x => x.SecurityId == securityId && x.BoardID == boardId);
+            stockDataList[index].StockRisk = forecast;
         }
 
         /// <summary> Вычисление оптимального значения коэффициента сглаживания.

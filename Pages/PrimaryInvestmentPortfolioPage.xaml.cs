@@ -148,12 +148,11 @@ namespace InvestmentAssistant.Pages
 
         private void SamplingStrategy(string strategy)
         {
+            capital = Convert.ToDouble(capitalTextBox.Text);
             switch (strategy)
             {
-                case "Консервативная":
-                    capital = Convert.ToDouble(capitalTextBox.Text);
+                case "Консервативная":                  
                     portfolios = PortfolioBuilder.BuildConservativePortfolio(stockDataList, capital);
-
                     investmentPortfolioDataGrid.Visibility = Visibility;
                     savePDFButton.Visibility = Visibility;
                     saveXLXSButton.Visibility = Visibility;
@@ -161,11 +160,19 @@ namespace InvestmentAssistant.Pages
                     break;
                 
                 case "Сбалансированная":
-                    MessageBox.Show("метод для сбланансир");
+                    portfolios = PortfolioBuilder.BuildBalancedPortfolio(stockDataList, capital);
+                    investmentPortfolioDataGrid.Visibility = Visibility;
+                    savePDFButton.Visibility = Visibility;
+                    saveXLXSButton.Visibility = Visibility;
+                    investmentPortfolioDataGrid.ItemsSource = portfolios;
                     break;
                 
                 case "Агрессивная":
-                    MessageBox.Show("метод для агрессивн");
+                   /* portfolios = PortfolioBuilder.BuildAggressivePortfolio(stockDataList, capital);
+                    investmentPortfolioDataGrid.Visibility = Visibility;
+                    savePDFButton.Visibility = Visibility;
+                    saveXLXSButton.Visibility = Visibility;
+                    investmentPortfolioDataGrid.ItemsSource = portfolios;*/
                     break;
                 
                 case "Пассивная":

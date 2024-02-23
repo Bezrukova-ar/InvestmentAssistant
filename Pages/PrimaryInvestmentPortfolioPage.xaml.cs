@@ -168,11 +168,11 @@ namespace InvestmentAssistant.Pages
                     break;
                 
                 case "Агрессивная":
-                   /* portfolios = PortfolioBuilder.BuildAggressivePortfolio(stockDataList, capital);
+                    portfolios = PortfolioBuilder.BuildAggressivePortfolio(stockDataList, capital);
                     investmentPortfolioDataGrid.Visibility = Visibility;
                     savePDFButton.Visibility = Visibility;
                     saveXLXSButton.Visibility = Visibility;
-                    investmentPortfolioDataGrid.ItemsSource = portfolios;*/
+                    investmentPortfolioDataGrid.ItemsSource = portfolios;
                     break;
                 
                 case "Пассивная":

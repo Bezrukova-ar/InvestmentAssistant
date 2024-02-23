@@ -184,7 +184,11 @@ namespace InvestmentAssistant.Pages
                     break;
                 
                 case "Активная":
-                    MessageBox.Show("метод для актив"); ;
+                    portfolios = PortfolioBuilder.BuildActivePortfolio(stockDataList, capital);
+                    investmentPortfolioDataGrid.Visibility = Visibility;
+                    savePDFButton.Visibility = Visibility;
+                    saveXLXSButton.Visibility = Visibility;
+                    investmentPortfolioDataGrid.ItemsSource = portfolios;
                     break;
                
                 default:

@@ -176,7 +176,11 @@ namespace InvestmentAssistant.Pages
                     break;
                 
                 case "Пассивная":
-                    MessageBox.Show("метод для пассив"); ;
+                    portfolios = PortfolioBuilder.BuildPassivePortfolio(stockDataList, capital);
+                    investmentPortfolioDataGrid.Visibility = Visibility;
+                    savePDFButton.Visibility = Visibility;
+                    saveXLXSButton.Visibility = Visibility;
+                    investmentPortfolioDataGrid.ItemsSource = portfolios;
                     break;
                 
                 case "Активная":

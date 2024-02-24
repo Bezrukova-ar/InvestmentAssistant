@@ -1,6 +1,7 @@
 ﻿using InvestmentAssistant.Pages;
 using System;
 using System.Collections;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Input;
@@ -28,7 +29,6 @@ namespace InvestmentAssistant
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
-
         }
 
         /// <summary> Перетаскивание окна </summary>
@@ -92,20 +92,37 @@ namespace InvestmentAssistant
         /// <summary> Навигация по приложению, открытие страницы со справочной информацией </summary>
         private void rdHandbook_Click(object sender, RoutedEventArgs e)
         {
-            //PagesNavigation.Navigate(new Uri("Pages/HandbookPage.xaml", UriKind.RelativeOrAbsolute));
             PagesNavigation.Content = handbookPage;
         }
 
         /// <summary> Вызов метода для загрузки данных о ценных бумагах </summary>
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-
-            if (NetworkInterface.GetIsNetworkAvailable())
+        {               
+            // Проверяем доступность интернет-соединения
+            if (!CheckInternetConnection())
             {
-                MessageBox.Show("Отсутствует интернет соединение. Программа будет закрыта");
+                MessageBox.Show("Отсутствует интернет-соединение. программа будет закрыта принудительно");
                 this.Close();
             }
+
             await financeDataHandler.FillSecuritiesHashTable();
+        }
+
+        /// <summary> Проверка интернет соединения </summary>
+        public bool CheckInternetConnection()
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    string response = client.DownloadString("http://www.google.com/generate_204");
+                    return true;
+                }
+            }
+            catch
+            {
+                return false; 
+            }
         }
     }
 }

@@ -149,35 +149,7 @@ namespace InvestmentAssistant
 
                 // Отправляем прогресс через объект Progress
                 progress.Report(progressPercentage);
-
-                // Здесь можно добавить дополнительную задержку, если необходимо
-                //await Task.Delay(100); // Пример задержки
             }
-        }
-        /// <summary> Метод для заполнения данными для расчёта</summary>
-        /*public async Task FillDataForCalculationsList(List<HistoricalDataToCalculate> dataForCalculationsList, List<StockData> stockDataList)
-        {
-            var uniqueSecIDs = stockDataList.Select(s => s.SecurityId).Distinct().ToList();
-
-            foreach (var symbol in uniqueSecIDs)
-            {
-                var dataForCalculations = await financeAPI.GetListToCalculateProfitability(symbol);
-
-                foreach (var data in dataForCalculations)
-                {
-                    dataForCalculationsList.Add(new HistoricalDataToCalculate
-                    {
-                        SecurityId = data.SecurityId,
-                        BoardID = data.BoardID,
-                        Open = data.Open,
-                        Close = data.Close,
-                        TradeDate = data.TradeDate,
-                        High = data.High,
-                        Low = data.Low
-                    });
-                }
-            }
-        }*/
-
+        }       
     }
 }

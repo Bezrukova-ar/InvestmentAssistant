@@ -46,19 +46,27 @@ namespace InvestmentAssistant.Pages
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     portfolioList.Clear();
-                    for (int rowNumber = 2; rowNumber <= worksheet.Dimension.End.Row; rowNumber++)
+                    try
                     {
-                        PortfolioAsset asset = new PortfolioAsset
+                        for (int rowNumber = 2; rowNumber <= worksheet.Dimension.End.Row; rowNumber++)
                         {
-                            SecurityId = worksheet.Cells[rowNumber, 1].Text,
-                            SecurityName = worksheet.Cells[rowNumber, 2].Text,
-                            BoardID = worksheet.Cells[rowNumber, 3].Text,
-                            Quantity = int.Parse(worksheet.Cells[rowNumber, 4].Text),
-                            TotalInvestment = double.Parse(worksheet.Cells[rowNumber, 5].Text),
-                        };
-                        portfolioList.Add(asset);
+                            PortfolioAsset asset = new PortfolioAsset
+                            {
+                                SecurityId = worksheet.Cells[rowNumber, 1].Text,
+                                SecurityName = worksheet.Cells[rowNumber, 2].Text,
+                                BoardID = worksheet.Cells[rowNumber, 3].Text,
+                                Quantity = int.Parse(worksheet.Cells[rowNumber, 4].Text),
+                                TotalInvestment = double.Parse(worksheet.Cells[rowNumber, 5].Text),
+                            };
+                            portfolioList.Add(asset);
+                        }
                     }
-
+                    catch 
+                    {
+                        System.Windows.MessageBox.Show("Не удалось определить столбцы");
+                        return;
+                    }
+                   
                     portfolioDataGrid.Columns.Clear(); // Очистить столбцы DataGrid
 
                     // Создание столбцов, исключая Weight и StockRisk

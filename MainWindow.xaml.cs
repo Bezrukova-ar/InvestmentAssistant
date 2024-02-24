@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Windows;
+using System.Windows.Input;
 
 namespace InvestmentAssistant
 {
@@ -27,6 +28,24 @@ namespace InvestmentAssistant
             InitializeComponent();
             Loaded += MainWindow_Loaded;
 
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                DragMove();
+            }
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point position = Mouse.GetPosition(this);
+                Left = position.X + Left - Mouse.GetPosition(this).X;
+                Top = position.Y + Top - Mouse.GetPosition(this).Y;
+            }
         }
 
         /// <summary> Кнопка закрытия окна </summary>

@@ -91,6 +91,12 @@ namespace InvestmentAssistant.Pages
             if (PrimaryInvestmentPortfolioPage.stockDataList.Count > 0)
             {
                 optimizedPortfolio = portfolioOptimization.OptimizePortfolio(portfolioList, PrimaryInvestmentPortfolioPage.stockDataList);
+                if (optimizedPortfolio == null)
+                {
+                    System.Windows.MessageBox.Show("Не верный формат входных данных, проверьте акции и их значения");
+                    portfolioDataGrid.Visibility = Visibility;
+                    return;
+                }
                 portfolioDataGrid.ItemsSource = optimizedPortfolio;
                 return;
             }
@@ -152,6 +158,12 @@ namespace InvestmentAssistant.Pages
 
             //Использование метода оптимизации
             optimizedPortfolio = portfolioOptimization.OptimizePortfolio(portfolioList, PrimaryInvestmentPortfolioPage.stockDataList);
+            if (optimizedPortfolio == null)
+            {
+                System.Windows.MessageBox.Show("Не верный формат входных данных, проверьте акции и их значения");
+                portfolioDataGrid.Visibility = Visibility;
+                return;
+            }
             //Отображение таблицы
             portfolioDataGrid.ItemsSource = optimizedPortfolio;
             portfolioDataGrid.Visibility = Visibility;

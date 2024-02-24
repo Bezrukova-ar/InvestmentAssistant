@@ -1,6 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using InvestmentAssistant.Model.Strategy;
+using Microsoft.Win32;
 using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -13,12 +15,16 @@ namespace InvestmentAssistant.Pages
 {
     public partial class InvestmentPortfolioOptimizationPage : Page
     {
-        //PrimaryInvestmentPortfolioPage primaryInvestmentPortfolio = new PrimaryInvestmentPortfolioPage();
+        PortfolioOptimization portfolioOptimization = new PortfolioOptimization();
         /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary> Экземпляр класса для стратегий</summary>
         StrategyService strategyService = new StrategyService();
-        DataTable portfolioDataTable = new DataTable();
+
+        /// <summary> Инвестиционный портфель имеющийся</summary>
+        List<PortfolioAsset> portfolioList = new List<PortfolioAsset>();
+        /// <summary> Инвестиционный портфель оптимизированный</summary>
+        List<PortfolioAsset> optimizedPortfolio = new List<PortfolioAsset>();
 
         public InvestmentPortfolioOptimizationPage()
         {
@@ -34,42 +40,39 @@ namespace InvestmentAssistant.Pages
             if (openFileDialog.ShowDialog() == true)
             {
                 FileInfo file = new FileInfo(openFileDialog.FileName);
-
-                // Установите свойство LicenseContext перед использованием EPPlus
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 using (ExcelPackage package = new ExcelPackage(file))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                   // DataTable portfolioDataTable = new DataTable();
-
-                    foreach (var firstRowCell in worksheet.Cells[1, 1, 1, worksheet.Dimension.End.Column])
-                    {
-                        portfolioDataTable.Columns.Add(firstRowCell.Text);
-                    }
-
+                    portfolioList.Clear();
                     for (int rowNumber = 2; rowNumber <= worksheet.Dimension.End.Row; rowNumber++)
                     {
-                        var wsRow = worksheet.Cells[rowNumber, 1, rowNumber, worksheet.Dimension.End.Column];
-                        DataRow row = portfolioDataTable.Rows.Add();
-                        foreach (var cell in wsRow)
+                        PortfolioAsset asset = new PortfolioAsset
                         {
-                            row[cell.Start.Column - 1] = cell.Text;
-                        }
+                            SecurityId = worksheet.Cells[rowNumber, 1].Text,
+                            SecurityName = worksheet.Cells[rowNumber, 2].Text,
+                            BoardID = worksheet.Cells[rowNumber, 3].Text,
+                            Quantity = int.Parse(worksheet.Cells[rowNumber, 4].Text),
+                            TotalInvestment = double.Parse(worksheet.Cells[rowNumber, 5].Text),
+                        };
+                        portfolioList.Add(asset);
                     }
 
                     portfolioDataGrid.Columns.Clear(); // Очистить столбцы DataGrid
 
-                    //привязка данныъ с дататейбл к датагриду
-                    foreach (DataColumn column in portfolioDataTable.Columns)
+                    // Создание столбцов, исключая Weight и StockRisk
+                    foreach (var property in typeof(PortfolioAsset).GetProperties())
                     {
-                        DataGridTextColumn textColumn = new DataGridTextColumn();
-                        textColumn.Header = column.ColumnName;
-                        textColumn.Binding = new Binding(column.ColumnName);
-                        portfolioDataGrid.Columns.Add(textColumn);
+                        if (property.Name != "Weight" && property.Name != "StockRisk")
+                        {
+                            DataGridTextColumn textColumn = new DataGridTextColumn();
+                            textColumn.Header = property.Name;
+                            textColumn.Binding = new Binding(property.Name);
+                            portfolioDataGrid.Columns.Add(textColumn);
+                        }
                     }
-
-                    portfolioDataGrid.ItemsSource = portfolioDataTable.DefaultView;
+                    portfolioDataGrid.ItemsSource = portfolioList;
                 }
             }
         }
@@ -79,10 +82,13 @@ namespace InvestmentAssistant.Pages
         {
             if (PrimaryInvestmentPortfolioPage.stockDataList.Count > 0)
             {
-                //тут тоже метод оптимизации
-
-                //Отображение таблицы
-               // portfolioDataGrid.Visibility = Visibility;
+                optimizedPortfolio = portfolioOptimization.OptimizePortfolio(portfolioList, PrimaryInvestmentPortfolioPage.stockDataList);
+                portfolioDataGrid.ItemsSource = optimizedPortfolio;
+                return;
+            }
+            if (portfolioList.Count== 0)
+            {
+                MessageBox.Show("Сначала заполните таблицу данными, загрузив файл");
                 return;
             }
 
@@ -137,9 +143,16 @@ namespace InvestmentAssistant.Pages
             progressBar.Visibility = Visibility.Hidden;
 
             //Использование метода оптимизации
-
+            optimizedPortfolio = portfolioOptimization.OptimizePortfolio(portfolioList, PrimaryInvestmentPortfolioPage.stockDataList);
             //Отображение таблицы
+            portfolioDataGrid.ItemsSource = optimizedPortfolio;
             portfolioDataGrid.Visibility = Visibility;
+        }
+
+        /// <summary> Сохранение файла</summary>
+        private void saveXLSXButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

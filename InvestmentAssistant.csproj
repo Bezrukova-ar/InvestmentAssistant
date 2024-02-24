@@ -154,9 +154,11 @@
     </ApplicationDefinition>
     <Compile Include="Model\Strategy\HistoricalDataToCalculate.cs" />
     <Compile Include="Model\Strategy\InvestmentPortfolio.cs" />
+    <Compile Include="Model\Strategy\PortfolioAssets.cs" />
     <Compile Include="Model\Strategy\StockData.cs" />
     <Compile Include="Model\Strategy\Strategy.cs" />
     <Compile Include="PortfolioBuilder.cs" />
+    <Compile Include="PortfolioOptimization.cs" />
     <Compile Include="SecurityService.cs" />
     <Compile Include="StrategyAndConditions.cs" />
     <Compile Include="StrategyService.cs" />

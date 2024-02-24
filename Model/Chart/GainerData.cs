@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InvestmentAssistant.Model.Chart
+﻿namespace InvestmentAssistant.Model.Chart
 {
-    // Создание модели данных для графика (не используется там где апи суванье данных)
+    // Создание модели данных для графика 
     public class GainerData
     {
         public string SecurityName { get; set; }

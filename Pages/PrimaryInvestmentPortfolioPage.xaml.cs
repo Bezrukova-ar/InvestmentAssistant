@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,28 +58,30 @@ namespace InvestmentAssistant.Pages
         private void investmentGoalComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             userSelection[0] = investmentGoalComboBox.SelectedItem.ToString();
-            strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
+            strategyTextBlock.Text = strategyAndConditions.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
         }
 
         private void investmentHorizonComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             userSelection[1] = investmentHorizonComboBox.SelectedItem.ToString();
-            strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
+            strategyTextBlock.Text = strategyAndConditions.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
         }
 
         private void riskAccountingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             userSelection[2] = riskAccountingComboBox.SelectedItem.ToString();
-            strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
+            strategyTextBlock.Text = strategyAndConditions.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
         }
 
         private void expectedReturnComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             userSelection[3] = expectedReturnComboBox.SelectedItem.ToString();
-            strategyTextBlock.Text = strategyService.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
+            strategyTextBlock.Text = strategyAndConditions.DefinitionOfStrategy(investmentGoalComboBox, investmentHorizonComboBox, riskAccountingComboBox, expectedReturnComboBox, strategyAndConditions, userSelection);
         }
 
-
+        /// <summary> Обработчик вызывает метод рассчитывающий доходности и риски, 
+        /// а затем в соответствии с выбранной стратегией
+        /// составляет портфель</summary>
         private async void Button_Click(object sender, RoutedEventArgs e)
         {          
             if (userSelection.Any(item => item == null) || capitalTextBox.Text == "")
@@ -146,6 +147,7 @@ namespace InvestmentAssistant.Pages
             SamplingStrategy(strategyTextBlock.Text);
         }
 
+        /// <summary> Определяет стратегию, в соответствии со стратегией вызывает нужный метод формирования портфеля </summary>
         private void SamplingStrategy(string strategy)
         {
             capital = Convert.ToDouble(capitalTextBox.Text);
@@ -197,6 +199,7 @@ namespace InvestmentAssistant.Pages
             }
         }
 
+        /// <summary> Сохранение в PDF </summary>
         private void savePDFButton_Click(object sender, RoutedEventArgs e)
         {
             // Создание и настройка диалогового окна выбора места сохранения
@@ -247,6 +250,7 @@ namespace InvestmentAssistant.Pages
             }
         }
 
+        /// <summary> Сохранение в XLSX </summary>
         private void saveXLXSButton_Click(object sender, RoutedEventArgs e)
         {
             // Создание и настройка диалогового окна выбора места сохранения

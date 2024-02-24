@@ -1,9 +1,6 @@
 ﻿using InvestmentAssistant.Model.Strategy;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InvestmentAssistant
 {
@@ -42,17 +39,17 @@ namespace InvestmentAssistant
                             return portfolio;
 
 
-                            InvestmentPortfolio investment = new InvestmentPortfolio
-                            {
-                                SecurityId = stockDataList[i].SecurityId,
-                                SecurityName = stockDataList[i].SecurityName,
-                                BoardID = stockDataList[i].BoardID,
-                                Quantity = quantity,
-                                TotalInvestment = quantity * stockDataList[i].CurrentSharePrice
-                            };
-                            portfolio.Add(investment);
-                            sum += quantity * stockDataList[i].CurrentSharePrice;
-                        
+                        InvestmentPortfolio investment = new InvestmentPortfolio
+                        {
+                            SecurityId = stockDataList[i].SecurityId,
+                            SecurityName = stockDataList[i].SecurityName,
+                            BoardID = stockDataList[i].BoardID,
+                            Quantity = quantity,
+                            TotalInvestment = quantity * stockDataList[i].CurrentSharePrice
+                        };
+                        portfolio.Add(investment);
+                        sum += quantity * stockDataList[i].CurrentSharePrice;
+
                     }
                 }
             }
@@ -151,7 +148,6 @@ namespace InvestmentAssistant
                     };
                     portfolio.Add(investment);
                 }
-
                 i++;
             }
 
@@ -294,61 +290,7 @@ namespace InvestmentAssistant
             }
 
             return portfolio;
-        }
-
-        ///// <summary> Формирование инвестиционного портфеля активной стратегией</summary>
-        //public static List<InvestmentPortfolio> BuildActivePortfolio(List<StockData> stockDataList, double capital)
-        //{
-        //    stockDataList.RemoveAll(x => double.IsNaN(x.ProjectedStockReturn) || double.IsNaN(x.StockRisk));
-
-        //    stockDataList = stockDataList.OrderByDescending(x => x.ProjectedStockReturn).ThenByDescending(x => x.StockRisk)
-        //                                 .ToList();
-
-        //    // Создаем матрицу ковариации
-        //    double[,] covarianceMatrix = CalculateCovarianceMatrix(stockDataList);
-
-        //    // Определяем веса акций с помощью алгоритма Марковица
-        //    double[] weights = MarkowitzAlgorithm(covarianceMatrix);
-
-        //    // Создаем инвестиционный портфель
-        //    List<InvestmentPortfolio> portfolio = new List<InvestmentPortfolio>();
-        //    double sum = 0;
-        //    for (int i = 0; i < stockDataList.Count; i++)
-        //    {
-        //        double investmentAmount = capital * weights[i];
-
-        //        if (investmentAmount > 0)
-        //        {
-        //            int quantity = (int)(investmentAmount / stockDataList[i].CurrentSharePrice);
-
-        //            if (quantity > 0 && stockDataList[i].CurrentSharePrice < capital - sum)
-        //            {
-
-        //                if (sum >= capital)
-        //                    return portfolio;
-
-        //                // Дополнительная проверка для уменьшения quantity, если необходимо
-        //                if (quantity * stockDataList[i].CurrentSharePrice > capital - sum)
-        //                {
-        //                    quantity = (int)((capital - sum) / stockDataList[i].CurrentSharePrice);
-        //                }
-        //                InvestmentPortfolio investment = new InvestmentPortfolio
-        //                {
-        //                    SecurityId = stockDataList[i].SecurityId,
-        //                    SecurityName = stockDataList[i].SecurityName,
-        //                    BoardID = stockDataList[i].BoardID,
-        //                    Quantity = quantity,
-        //                    TotalInvestment = quantity * stockDataList[i].CurrentSharePrice
-        //                };
-        //                portfolio.Add(investment);
-        //                sum += quantity * stockDataList[i].CurrentSharePrice;
-        //            }
-        //        }
-        //    }
-
-        //    return portfolio;
-        //}
-
+        }   
 
         /// <summary> Формирование инвестиционного портфеля активной стратегией</summary>
         public static List<InvestmentPortfolio> BuildActivePortfolio(List<StockData> stockDataList, double capital)
@@ -410,7 +352,6 @@ namespace InvestmentAssistant
             return portfolio;
         }
 
-
         /// <summary> Алгоритм Марковица для активной стратегии </summary>
         private static double[] MarkowitzAlgorithmForActiveStrategy(List<StockData> stockDataList, double[,] covarianceMatrix)
         {
@@ -427,7 +368,5 @@ namespace InvestmentAssistant
 
             return weights;
         }
-
-
     }
 }

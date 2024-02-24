@@ -1,6 +1,7 @@
 ﻿using InvestmentAssistant.Pages;
 using System;
 using System.Collections;
+using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Input;
 
@@ -30,6 +31,7 @@ namespace InvestmentAssistant
 
         }
 
+        /// <summary> Перетаскивание окна </summary>
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -37,7 +39,7 @@ namespace InvestmentAssistant
                 DragMove();
             }
         }
-
+        /// <summary> Перетаскивание окна </summary>
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -97,6 +99,12 @@ namespace InvestmentAssistant
         /// <summary> Вызов метода для загрузки данных о ценных бумагах </summary>
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                MessageBox.Show("Отсутствует интернет соединение. Программа будет закрыта");
+                this.Close();
+            }
             await financeDataHandler.FillSecuritiesHashTable();
         }
     }

@@ -13,13 +13,11 @@ namespace InvestmentAssistant.Pages
 {
     public partial class InvestmentPortfolioOptimizationPage : Page
     {
-        PrimaryInvestmentPortfolioPage primaryInvestmentPortfolio = new PrimaryInvestmentPortfolioPage();
+        //PrimaryInvestmentPortfolioPage primaryInvestmentPortfolio = new PrimaryInvestmentPortfolioPage();
         /// <summary> Экземпляр класса для заполнения таблиц финансовыми данными </summary>
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
         /// <summary> Экземпляр класса для стратегий</summary>
         StrategyService strategyService = new StrategyService();
-
-        /// <summary> Данные портфеля</summary>
         DataTable portfolioDataTable = new DataTable();
 
         public InvestmentPortfolioOptimizationPage()
@@ -43,7 +41,7 @@ namespace InvestmentAssistant.Pages
                 using (ExcelPackage package = new ExcelPackage(file))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    
+                   // DataTable portfolioDataTable = new DataTable();
 
                     foreach (var firstRowCell in worksheet.Cells[1, 1, 1, worksheet.Dimension.End.Column])
                     {
@@ -74,18 +72,17 @@ namespace InvestmentAssistant.Pages
                     portfolioDataGrid.ItemsSource = portfolioDataTable.DefaultView;
                 }
             }
-            portfolioDataTable.Clear();
         }
 
         /// <summary> Оптимизация имеющегося портфеля</summary>
         private async void portfolioOptimizationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (primaryInvestmentPortfolio.stockDataList.Count > 0)
+            if (PrimaryInvestmentPortfolioPage.stockDataList.Count > 0)
             {
                 //тут тоже метод оптимизации
 
                 //Отображение таблицы
-                portfolioDataGrid.Visibility = Visibility;
+               // portfolioDataGrid.Visibility = Visibility;
                 return;
             }
 
@@ -98,16 +95,16 @@ namespace InvestmentAssistant.Pages
                 progressBar.Value = value;
             });
 
-            await financeDataHandler.FillStockDataList(primaryInvestmentPortfolio.stockDataList);
+            await financeDataHandler.FillStockDataList(PrimaryInvestmentPortfolioPage.stockDataList);
 
             // Вызываем второй метод с обновлением прогресса
             await Task.Run(async () =>
             {
-                await financeDataHandler.FillDataForCalculationsList(primaryInvestmentPortfolio.dataForCalculationsList, primaryInvestmentPortfolio.stockDataList, progress);
+                await financeDataHandler.FillDataForCalculationsList(PrimaryInvestmentPortfolioPage.dataForCalculationsList, PrimaryInvestmentPortfolioPage.stockDataList, progress);
             });
 
             //прогнозирование доходности акции
-            var profitabilityList = (from item in primaryInvestmentPortfolio.dataForCalculationsList
+            var profitabilityList = (from item in PrimaryInvestmentPortfolioPage.dataForCalculationsList
                                      group item by new { item.SecurityId, item.BoardID } into groupedData
                                      select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, ProfitabilityArray = groupedData.Select(x => x.Profitability).ToArray() }).ToList();
 
@@ -119,11 +116,11 @@ namespace InvestmentAssistant.Pages
                 string boardId = profitabilityData.BoardID;
 
                 // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
-                strategyService.ExponentialSmoothingProfitability(primaryInvestmentPortfolio.stockDataList, dailyReturns, alpha, securityId, boardId);
+                strategyService.ExponentialSmoothingProfitability(PrimaryInvestmentPortfolioPage.stockDataList, dailyReturns, alpha, securityId, boardId);
             }
 
             //прогнозирование рисков акции
-            var riskList = (from item in primaryInvestmentPortfolio.dataForCalculationsList
+            var riskList = (from item in PrimaryInvestmentPortfolioPage.dataForCalculationsList
                             group item by new { item.SecurityId, item.BoardID } into groupedData
                             select new { SecurityId = groupedData.Key.SecurityId, BoardID = groupedData.Key.BoardID, RiskArray = groupedData.Select(x => x.Risk).ToArray() }).ToList();
 
@@ -135,7 +132,7 @@ namespace InvestmentAssistant.Pages
                 string boardId = riskData.BoardID;
 
                 // Применяем экспоненциальное сглаживание для прогнозирования и обновления данных
-                strategyService.ExponentialSmoothingRisk(primaryInvestmentPortfolio.stockDataList, dailyReturns, alpha, securityId, boardId);
+                strategyService.ExponentialSmoothingRisk(PrimaryInvestmentPortfolioPage.stockDataList, dailyReturns, alpha, securityId, boardId);
             }
             progressBar.Visibility = Visibility.Hidden;
 

@@ -209,17 +209,15 @@ namespace InvestmentAssistant
                 {
                     int quantity = (int)(investmentAmount / stockDataList[i].CurrentSharePrice);
 
+                    if (sum >= capital)
+                        return portfolio;
+                    // Дополнительная проверка для уменьшения quantity, если необходимо
+                    if (quantity * stockDataList[i].CurrentSharePrice > capital - sum)
+                    {
+                        quantity = (int)((capital - sum) / stockDataList[i].CurrentSharePrice);
+                    }
                     if (quantity > 0)
                     {
-                        if (sum >= capital)
-                            return portfolio;
-
-
-                        // Дополнительная проверка для уменьшения quantity, если необходимо
-                        if (quantity * stockDataList[i].CurrentSharePrice > capital - sum)
-                        {
-                            quantity = (int)((capital - sum) / stockDataList[i].CurrentSharePrice);
-                        }
                         InvestmentPortfolio investment = new InvestmentPortfolio
                         {
                             SecurityId = stockDataList[i].SecurityId,

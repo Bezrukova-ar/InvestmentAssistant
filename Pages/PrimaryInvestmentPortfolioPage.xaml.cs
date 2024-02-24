@@ -24,9 +24,9 @@ namespace InvestmentAssistant.Pages
         FinanceDataHandler financeDataHandler = new FinanceDataHandler();
 
         /// <summary> Коллекция, где хранится информация для формирования инвестиционного портфеля</summary>
-        public List<StockData> stockDataList = new List<StockData>();
+        public static List<StockData> stockDataList = new List<StockData>();
         /// <summary> Коллекция, где хранится информация для расчетов для формирования инвестиционного портфеля</summary>
-        public List<HistoricalDataToCalculate> dataForCalculationsList = new List<HistoricalDataToCalculate>();
+        public static List<HistoricalDataToCalculate> dataForCalculationsList = new List<HistoricalDataToCalculate>();
         /// <summary> Коллекция, где хранится список инвестиционного портфеля</summary>
         List<InvestmentPortfolio> portfolios = new List<InvestmentPortfolio>();
 

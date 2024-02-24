@@ -8,6 +8,21 @@
       Title="HandbookPage">
 
     <Border CornerRadius="5" Background="{DynamicResource SecundaryBackgroundColor}">
-        <Label Content="Handbook" Foreground="Black" FontSize="50" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Grid>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="#FF2B0749" FontFamily="Trebuchet MS" TextDecorations="{x:Null}" TextAlignment="Center" >Информация по функционалу:</TextBlock>
+
+                    <TextBlock x:Name="StatisticsSection" Foreground="#FF2B0749" FontSize="26" FontFamily="Trebuchet MS" FontWeight="Bold" Margin="50,20,0,10">Статистика</TextBlock>
+                    <TextBlock x:Name="statisticTextBlock" Foreground="#FF2B0749" FontSize="22" TextWrapping="WrapWithOverflow" Margin="25,0,0,0" FontFamily="Trebuchet MS" />
+
+                    <TextBlock x:Name="PortfolioFormationSection" Foreground="#FF2B0749" FontSize="26" FontFamily="Trebuchet MS" FontWeight="Bold" Margin="50,20,0,10">Формирование портфеля</TextBlock>
+                    <TextBlock x:Name="primaryPortfolioTextBlock"  Foreground="#FF2B0749" TextWrapping="WrapWithOverflow" FontSize="22" Margin="25,0,0,0" FontFamily="Trebuchet MS" />
+
+                    <TextBlock x:Name="PortfolioOptimizationSection" Foreground="#FF2B0749" FontSize="26" FontFamily="Trebuchet MS" FontWeight="Bold" Margin="50,20,0,10">Оптимизация портфеля</TextBlock>
+                    <TextBlock x:Name="optimizationPortfolioTextBlock" Foreground="#FF2B0749" TextWrapping="WrapWithOverflow"  FontSize="22" Margin="25,0,0,0" FontFamily="Trebuchet MS"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Border>
 </Page>

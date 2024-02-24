@@ -10,7 +10,8 @@
         Background="Transparent" AllowsTransparency="True"
         ResizeMode="NoResize" WindowState="Normal"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        MouseMove="Window_MouseMove">
+        MouseMove="Window_MouseMove"
+        Icon="{StaticResource AppIcon}">
     <Border CornerRadius="8" Background="{DynamicResource PrimaryBackgroundColor}">
         <Grid>
             <Grid.ColumnDefinitions>
